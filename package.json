@@ -27,9 +27,9 @@
   "dependencies": {
     "@tensorflow/tfjs-node": "^0.1.15",
     "appium-support": "^2.20.0",
+    "asyncbox": "^2.5.0",
     "bluebird": "^3.5.2",
-    "canvas": "^1.6.12",
-    "msgpack": "^1.0.2"
+    "canvas": "^1.6.12"
   },
   "devDependencies": {
     "appium-gulp-plugins": "^3.0.0",
@@ -42,6 +42,7 @@
     "eslint-plugin-mocha": "^4.7.0",
     "eslint-plugin-promise": "^3.3.1",
     "mocha": "^5.1.1",
-    "should": "^13.2.3"
+    "should": "^13.2.3",
+    "wd": "^1.10.3"
   }
 }

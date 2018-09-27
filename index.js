@@ -1,2 +1,2 @@
-import classifier from './lib/classifier';
-export default classifier;
+import find from './lib/classifier';
+export { find };
