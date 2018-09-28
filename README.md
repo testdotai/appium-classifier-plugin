@@ -1,3 +1,3 @@
 ## OSX Deps
 
-```brew install cairo libjpeg```
+```brew install pkg-config cairo pango libpng jpeg giflib```

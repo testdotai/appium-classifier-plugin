@@ -1,6 +1,7 @@
 import wd from 'wd';
 import chai from 'chai';
 import should from 'should';
+import B from 'bluebird';
 
 chai.use(should);
 
@@ -17,9 +18,12 @@ describe('Finding', function () {
       deviceName: 'Android Emulator',
       appPackage: 'com.walmart.android',
       appActivity: '.app.main.MainActivity',
+      appWaitActivity: '.app.main.HomeActivity',
       automationName: 'UiAutomator2',
       semanticLabelModule: 'test-ai-classifier',
+      shouldUseCompactResponses: false,
     });
+    await B.delay(8000); // wait just a bit for things to be ready
   });
 
   after(async function () {
@@ -30,6 +34,7 @@ describe('Finding', function () {
 
   it('should find an element by its label', async function () {
     await driver.elementBySemanticLabel('cart').click();
+    await B.delay(2000);
     await driver.elementByXPath('//*[@text="SIGN IN TO SEE"]');
   });
 });
