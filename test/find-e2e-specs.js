@@ -21,7 +21,7 @@ describe('Finding', function () {
       appActivity: '.app.main.MainActivity',
       appWaitActivity: '.app.main.HomeActivity',
       automationName: 'UiAutomator2',
-      semanticLabelModule: 'test-ai-classifier',
+      customFindModule: 'test-ai-classifier',
       shouldUseCompactResponses: false,
     });
     await B.delay(8000); // wait just a bit for things to be ready
@@ -35,7 +35,7 @@ describe('Finding', function () {
 
   it('should find an element by its label', async function () {
     this.timeout(60000);
-    await driver.elementBySemanticLabel('cart').click();
+    await driver.elementByCustom('cart').click();
     await B.delay(2000);
     await driver.elementByXPath('//*[@text="SIGN IN TO SEE"]');
   });
