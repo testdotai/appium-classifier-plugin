@@ -1,7 +1,8 @@
 import path from 'path';
 import chai from 'chai';
 import should from 'should';
-import { getModel, canvasFromImage, tensorFromImage, predictionFromImage } from '../lib/classifier';
+import { getModel, tensorFromImage, predictionFromImage } from '../lib/classifier';
+import { canvasFromImage } from '../lib/image';
 
 chai.use(should);
 
