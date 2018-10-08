@@ -62,6 +62,10 @@ driver.findElement('-custom', 'cart');
 The above command (which will differ for each Appium client, of course), will
 use this plugin to find a shopping cart element on the screen.
 
+How did we know we could use "cart" as a label? There is a predefined list of
+available labels in `lib/labels.js`--check there to see if the elements you
+want to find match any of them.
+
 ## Development
 
 There are some tests, but they must be run ad hoc. See the tests themselves for
