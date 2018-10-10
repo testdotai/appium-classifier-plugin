@@ -53,6 +53,11 @@ requested, send in the module name as the `customFindModule` capability. For
 example, to use this plugin, set the `customFindModule` capability to
 `test-ai-classifier`.
 
+In addition to this capability, you'll need to set another Appium capability,
+`shouldUseCompactResponses`, to `false`. This directs Appium to include extra
+information about elements while they are being found, which dramatically
+speeds up the process of getting inputs to this plugin.
+
 In your test, you can now make new findElement calls, for example:
 
 ```js

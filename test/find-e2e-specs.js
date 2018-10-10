@@ -1,10 +1,15 @@
 import wd from 'wd';
+import path from 'path';
 import chai from 'chai';
 import should from 'should';
 import B from 'bluebird';
 
 chai.use(should);
 
+const WALMART = {
+  app: path.resolve(__dirname, '..', '..', 'test', 'fixtures', 'apps', 'walmart.apk'),
+  appWaitActivity: '.app.main.HomeActivity',
+};
 
 describe('Finding', function () {
   let driver;
@@ -15,11 +20,9 @@ describe('Finding', function () {
     // test-ai-classifier package `npm link`ed into it
     driver = wd.promiseChainRemote('http://localhost:4723/wd/hub');
     await driver.init({
+      ...WALMART,
       platformName: 'Android',
       deviceName: 'Android Emulator',
-      appPackage: 'com.walmart.android',
-      appActivity: '.app.main.MainActivity',
-      appWaitActivity: '.app.main.HomeActivity',
       automationName: 'UiAutomator2',
       customFindModule: 'test-ai-classifier',
       shouldUseCompactResponses: false,
