@@ -49,9 +49,11 @@ dependency tree and make it available.
 
 Element finding plugins are made available via a special locator strategy,
 `-custom`. To tell Appium which plugin to use when this locator strategy is
-requested, send in the module name as the `customFindModule` capability. For
-example, to use this plugin, set the `customFindModule` capability to
-`test-ai-classifier`.
+requested, send in the module name and a selector shortcut as the
+`customFindModules` capability. For example, to use this plugin, set the
+`customFindModules` capability to something like `{"ai":
+"test-ai-classifier"}`. This will enable access to the plugin when using
+selectors of the form `ai:foo`.
 
 In addition to this capability, you'll need to set another Appium capability,
 `shouldUseCompactResponses`, to `false`. This directs Appium to include extra
@@ -61,7 +63,7 @@ speeds up the process of getting inputs to this plugin.
 In your test, you can now make new findElement calls, for example:
 
 ```js
-driver.findElement('-custom', 'cart');
+driver.findElement('-custom', 'ai:cart');
 ```
 
 The above command (which will differ for each Appium client, of course), will
