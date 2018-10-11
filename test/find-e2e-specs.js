@@ -24,7 +24,7 @@ describe('Finding', function () {
       platformName: 'Android',
       deviceName: 'Android Emulator',
       automationName: 'UiAutomator2',
-      customFindModule: 'test-ai-classifier',
+      customFindModules: {ai: 'test-ai-classifier'},
       shouldUseCompactResponses: false,
     });
     await B.delay(8000); // wait just a bit for things to be ready
@@ -38,7 +38,7 @@ describe('Finding', function () {
 
   it('should find an element by its label', async function () {
     this.timeout(60000);
-    await driver.elementByCustom('cart').click();
+    await driver.elementByCustom('ai:cart').click();
     await B.delay(2000);
     await driver.elementByXPath('//*[@text="SIGN IN TO SEE"]');
   });
