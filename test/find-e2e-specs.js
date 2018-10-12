@@ -6,6 +6,12 @@ import B from 'bluebird';
 
 chai.use(should);
 
+// since when running tests we want to use the currently transpiled version of
+// the module with Appium, and not a version which is installed or linked into
+// the Appium tree, make sure we pass an absolute path as the module name so
+// Appium is always picking up the latest from this project.
+const MODULE_PATH = path.resolve(__dirname, '..');
+
 const WALMART = {
   app: path.resolve(__dirname, '..', '..', 'test', 'fixtures', 'apps', 'walmart.apk'),
   appWaitActivity: '.app.main.HomeActivity',
@@ -24,7 +30,7 @@ describe('Finding', function () {
       platformName: 'Android',
       deviceName: 'Android Emulator',
       automationName: 'UiAutomator2',
-      customFindModules: {ai: 'test-ai-classifier'},
+      customFindModules: {ai: MODULE_PATH},
       shouldUseCompactResponses: false,
     });
     await B.delay(8000); // wait just a bit for things to be ready
