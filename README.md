@@ -28,16 +28,8 @@ TBD (not yet tested or supported)
 
 ## Appium Setup
 
-Appium's element finding plugin feature is experimental, so some manual configuration is required.
-
-1. Clone the repositories for [appium](https://github.com/appium/appium), [appium-base-driver](https://github.com/appium/appium-base-driver), and any mobile OS driver you want to use this feature with (e.g., [appium-uiautomator2-driver](https://github.com/appium/appium-uiautomator2-driver).
-2. In each repo, run `npm install` to get all the dependencies.
-3. Apply [this patch](https://github.com/appium/appium-base-driver/pull/268) to appium-base-driver.
-4. Inside appium-base-driver, run `npm run build && npm link` to transpile the patch and link the changes into the local NPM registry
-5. Inside your mobile OS driver (e.g. appium-uiautomator2-driver), run `npm link appium-base-driver` to make the patched appium-base-driver active.
-6. Inside the main appium repo, run `npm link appium-base-driver` and then also `npm link appium-uiautomator2-driver` to get the whole dependency tree registering the patched base-driver.
-7. Inside the main appium repo, run `node .` to start the server
-8. Your running server now has the ability to use element finding plugins like this one!
+Appium's element finding plugin feature is experimental, so you will need to be
+using Appium version 1.9.2-beta.2 at a minimum.
 
 ## Classifier Setup
 
@@ -45,15 +37,19 @@ To make this plugin available to Appium, simply go to the main Appium repo, and
 run `npm install test-ai-classifier` to install this plugin into Appium's
 dependency tree and make it available.
 
+Otherwise, install it somewhere on your filesystem and use an absolute path as
+the module name (see below).
+
 ## Usage
 
 Element finding plugins are made available via a special locator strategy,
 `-custom`. To tell Appium which plugin to use when this locator strategy is
 requested, send in the module name and a selector shortcut as the
 `customFindModules` capability. For example, to use this plugin, set the
-`customFindModules` capability to something like `{"ai":
-"test-ai-classifier"}`. This will enable access to the plugin when using
-selectors of the form `ai:foo`.
+`customFindModules` capability to something like `{"ai": "test-ai-classifier"}`
+(here `ai` is the "selector shortcut" and `test-ai-classifier` is the "module
+name"). This will enable access to the plugin when using selectors of the form
+`ai:foo`.
 
 In addition to this capability, you'll need to set another Appium capability,
 `shouldUseCompactResponses`, to `false`. This directs Appium to include extra
