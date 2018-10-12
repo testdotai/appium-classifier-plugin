@@ -2,6 +2,8 @@
   "name": "test-ai-classifier",
   "version": "1.0.0",
   "description": "Appium semantic label plugin",
+  "homepage": "https://github.com/testdotai/classifier#readme",
+  "bugs": "https://github.com/testdotai/classifier/issues",
   "main": "./build/index.js",
   "scripts": {
     "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",
@@ -15,6 +17,13 @@
     "lint": "gulp eslint",
     "lint:fix": "gulp eslint --fix"
   },
+  "files": [
+    "build",
+    "lib",
+    "model",
+    "index.js",
+    "README.md"
+  ],
   "keywords": [
     "test",
     "automation",
@@ -22,6 +31,7 @@
     "ai",
     "ml"
   ],
+  "repository": "github:testdotai/classifier",
   "author": "Jonathan Lipps <jlipps@gmail.com>",
   "license": "Apache-2.0",
   "dependencies": {
