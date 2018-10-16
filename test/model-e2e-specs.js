@@ -1,7 +1,8 @@
 import path from 'path';
 import chai from 'chai';
 import should from 'should';
-import { getModel, tensorFromImage, predictionFromImage } from '../lib/classifier';
+import { getModel, tensorFromImage, predictionFromImage,
+         DEFAULT_CONFIDENCE_THRESHOLD } from '../lib/classifier';
 import { canvasFromImage } from '../lib/image';
 
 chai.use(should);
@@ -16,14 +17,22 @@ describe('Model', function () {
   });
 
   it('should make predictions based on model', async function () {
-    let pred = await predictionFromImage(await canvasFromImage(CART_IMG));
-    pred.should.eql("cart");
+    let pred = await predictionFromImage(await canvasFromImage(CART_IMG), DEFAULT_CONFIDENCE_THRESHOLD, "cart");
+    pred[0].should.eql("cart");
 
-    pred = await predictionFromImage(await canvasFromImage(MIC_IMG));
-    pred.should.eql("microphone");
+    pred = await predictionFromImage(await canvasFromImage(MIC_IMG), DEFAULT_CONFIDENCE_THRESHOLD, "microphone");
+    pred[0].should.eql("microphone");
 
-    pred = await predictionFromImage(await canvasFromImage(FOLDER_IMG));
-    pred.should.eql("unclassified");
+    pred = await predictionFromImage(await canvasFromImage(FOLDER_IMG), DEFAULT_CONFIDENCE_THRESHOLD, "folder");
+    pred[0].should.eql("unclassified");
+  });
+
+  it('should obey a confidence threshold', async function () {
+    let pred = await predictionFromImage(await canvasFromImage(CART_IMG), 1, "cart");
+    pred[0].should.eql("unclassified");
+
+    pred = await predictionFromImage(await canvasFromImage(FOLDER_IMG), 0.1, "folder");
+    pred[0].should.eql("facebook");
   });
 });
 

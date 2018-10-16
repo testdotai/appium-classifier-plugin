@@ -63,6 +63,8 @@ describe('Finding - Android', function () {
   it('should find an element by its label', async function () {
     this.timeout(90000);
     await driver.elementByAccessibilityId('Open navigation drawer');
+    await driver.elementByCustom('ai:menu').click();
+    await driver.elementByCustom('ai:home').click();
     await driver.elementByCustom('ai:cart').click();
     await driver.elementByAccessibilityId('Estimated Tax');
   });

@@ -39,7 +39,8 @@
     "appium-support": "^2.20.0",
     "asyncbox": "^2.5.0",
     "bluebird": "^3.5.2",
-    "canvas": "next"
+    "canvas": "next",
+    "lodash": "^4.17.11"
   },
   "devDependencies": {
     "appium-gulp-plugins": "^3.0.0",
