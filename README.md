@@ -69,6 +69,18 @@ How did we know we could use "cart" as a label? There is a predefined list of
 available labels in `lib/labels.js`--check there to see if the elements you
 want to find match any of them.
 
+### Match confidence
+
+Using the `testaiConfidenceThreshold` capability, you can set a confidence
+threshold below which the plugin will refuse to consider elements as matching
+your label. This capability should be a number between 0 and 1, where 1 means
+confidence must be perfect, and 0 means no confidence at all is required.
+
+This is a useful capability to set after reading the Appium logs from a failed
+element find; this plugin will tell you what the highest confidence of any
+element that matched your label was, so you could use that to modulate the
+confidence value. The default confidence level is `0.2`.
+
 ## Development
 
 There are some tests, but they must be run ad hoc. See the tests themselves for
