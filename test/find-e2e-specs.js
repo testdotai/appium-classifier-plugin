@@ -61,7 +61,7 @@ describe('Finding - Android', function () {
   });
 
   it('should find an element by its label', async function () {
-    this.timeout(60000);
+    this.timeout(90000);
     await driver.elementByAccessibilityId('Open navigation drawer');
     await driver.elementByCustom('ai:cart').click();
     await driver.elementByAccessibilityId('Estimated Tax');
@@ -87,7 +87,7 @@ describe('Finding - iOS', function () {
   // this test assumes you've launched the app and hit 'continue' to the
   // 'what's new in photos' interstitial
   it('should find an element by its label', async function () {
-    this.timeout(60000);
+    this.timeout(90000);
     await driver.elementByCustom('ai:search').click();
     await driver.elementByAccessibilityId('Cancel');
   });
