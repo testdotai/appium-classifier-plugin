@@ -1,6 +1,6 @@
 {
   "name": "test-ai-classifier",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Appium semantic label plugin",
   "homepage": "https://github.com/testdotai/appium-classifier-plugin#readme",
   "bugs": "https://github.com/testdotai/appium-classifier-plugin/issues",
