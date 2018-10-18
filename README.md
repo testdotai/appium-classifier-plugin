@@ -8,6 +8,10 @@ having to dig through your app hierarchy. The same labels can be used to find
 elements with the same general shape across different apps and different visual
 designs.
 
+If you haven't worked with Appium element finding plugins before, you should
+first check out the [Appium element finding plugins
+doc](https://github.com/appium/appium/blob/52e5bf1217f08b963136254222ba2ebef428f0d1/docs/en/advanced-concepts/element-finding-plugins.md).
+
 ## System Setup
 
 First, you'll need some system dependencies to do with image processing.
