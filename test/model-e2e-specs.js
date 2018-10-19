@@ -2,7 +2,7 @@ import path from 'path';
 import chai from 'chai';
 import should from 'should';
 import { getModel, tensorFromImage, predictionFromImage,
-         DEFAULT_CONFIDENCE_THRESHOLD } from '../lib/classifier';
+  DEFAULT_CONFIDENCE_THRESHOLD } from '../lib/classifier';
 import { canvasFromImage } from '../lib/image';
 
 chai.use(should);
