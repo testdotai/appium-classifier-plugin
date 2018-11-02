@@ -24,7 +24,10 @@ brew install pkg-config cairo pango libpng jpeg giflib
 
 ### Linux
 
-TBD (not yet tested or supported)
+```
+sudo apt-get install pkg-config libcairo2-dev libpango* libpng-dev libjpeg-dev giflib*
+```
+You may have to install each package individually if you run into issues
 
 ### Windows
 
