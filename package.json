@@ -8,11 +8,11 @@
   "gypfile": true,
   "scripts": {
     "clean-js": "rm -rf node_modules && rm -f package-lock.json && npm install",
-    "clean-cpp": "node-gyp clean",
-    "clean": "npm run clean-js && npm run clean-cpp",
+    "clean-cc": "node-gyp clean",
+    "clean": "npm run clean-js && npm run clean-cc",
     "build-js": "gulp transpile",
-    "build-cpp": "node-gyp rebuild",
-    "build": "npm run build-cpp && npm run build-js",
+    "build-cc": "node-gyp rebuild",
+    "build": "npm run build-cc && npm run build-js",
     "mocha": "mocha",
     "prepublish": "gulp prepublish",
     "test": "gulp once",
@@ -60,7 +60,6 @@
     "eslint-plugin-mocha": "^4.7.0",
     "eslint-plugin-promise": "^3.3.1",
     "mocha": "^5.1.1",
-    "node-gyp": "^3.8.0",
     "should": "^13.2.3",
     "wd": "^1.11.0"
   }
