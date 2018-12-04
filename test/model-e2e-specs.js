@@ -6,6 +6,8 @@ import { getModel, tensorFromImage, saveImageFromTensor, predictionFromImage,
   predictionsFromImages, DEFAULT_CONFIDENCE_THRESHOLD } from '../lib/classifier';
 import { canvasFromImage } from '../lib/image';
 
+const { tfVersion } = require('bindings')('test-ai-classifier');
+
 chai.use(should);
 
 const CART_IMG = path.resolve(__dirname, "..", "..", "test", "fixtures", "cart.png");
@@ -18,13 +20,11 @@ describe('Model', function () {
     await getModel();
   });
 
-  it.skip('should load and save a tensor', async function () {
-    // use for debugging
-    const t = await tensorFromImage(await canvasFromImage(MENU_IMG));
-    await saveImageFromTensor(t, "debug.png");
+  it('should get the tensorflow version', function () {
+    tfVersion().should.eql('1.0');
   });
 
-  it('should make predictions based on model - cart', async function () {
+  it('should make predictions based on model', async function () {
     let pred = await predictionFromImage(await canvasFromImage(CART_IMG), DEFAULT_CONFIDENCE_THRESHOLD, "cart");
     pred[0].should.eql("cart");
   });
