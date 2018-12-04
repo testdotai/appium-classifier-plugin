@@ -5,6 +5,8 @@ import { getModel, tensorFromImage, predictionFromImage,
   DEFAULT_CONFIDENCE_THRESHOLD } from '../lib/classifier';
 import { canvasFromImage } from '../lib/image';
 
+const { tfVersion } = require('bindings')('test-ai-classifier');
+
 chai.use(should);
 
 const CART_IMG = path.resolve(__dirname, "..", "..", "test", "fixtures", "cart.png");
@@ -14,6 +16,10 @@ const FOLDER_IMG = path.resolve(__dirname, "..", "..", "test", "fixtures", "fold
 describe('Model', function () {
   it('should load the model', async function () {
     await getModel();
+  });
+
+  it('should get the tensorflow version', function () {
+    tfVersion().should.eql('1.0');
   });
 
   it('should make predictions based on model', async function () {

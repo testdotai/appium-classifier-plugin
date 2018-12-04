@@ -5,9 +5,14 @@
   "homepage": "https://github.com/testdotai/appium-classifier-plugin#readme",
   "bugs": "https://github.com/testdotai/appium-classifier-plugin/issues",
   "main": "./build/index.js",
+  "gypfile": true,
   "scripts": {
-    "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",
-    "build": "gulp transpile",
+    "clean-js": "rm -rf node_modules && rm -f package-lock.json && npm install",
+    "clean-cpp": "node-gyp clean",
+    "clean": "npm run clean-js && npm run clean-cpp",
+    "build-js": "gulp transpile",
+    "build-cpp": "node-gyp rebuild",
+    "build": "npm run build-cpp && npm run build-js",
     "mocha": "mocha",
     "prepublish": "gulp prepublish",
     "test": "gulp once",
@@ -38,9 +43,11 @@
     "@tensorflow/tfjs-node": "^0.1.15",
     "appium-support": "^2.20.0",
     "asyncbox": "^2.5.0",
+    "bindings": "^1.3.1",
     "bluebird": "^3.5.2",
     "canvas": "next",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.11",
+    "node-addon-api": "^1.6.2"
   },
   "devDependencies": {
     "appium-gulp-plugins": "^3.0.0",
@@ -53,6 +60,7 @@
     "eslint-plugin-mocha": "^4.7.0",
     "eslint-plugin-promise": "^3.3.1",
     "mocha": "^5.1.1",
+    "node-gyp": "^3.8.0",
     "should": "^13.2.3",
     "wd": "^1.11.0"
   }
