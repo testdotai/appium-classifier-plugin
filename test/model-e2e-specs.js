@@ -6,7 +6,7 @@ import { getModel, tensorFromImage, saveImageFromTensor, predictionFromImage,
   predictionsFromImages, DEFAULT_CONFIDENCE_THRESHOLD } from '../lib/classifier';
 import { canvasFromImage } from '../lib/image';
 
-const { tfVersion } = require('bindings')('test-ai-classifier');
+const { TF_VERSION } = require('bindings')('test-ai-classifier');
 
 chai.use(should);
 
@@ -21,7 +21,7 @@ describe('Model', function () {
   });
 
   it('should get the tensorflow version', function () {
-    tfVersion().should.be.a.string;
+    TF_VERSION.should.match(/^1\./);
   });
 
   it('should make predictions based on model', async function () {
