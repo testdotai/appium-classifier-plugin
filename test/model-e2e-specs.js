@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs';
 import chai from 'chai';
 import should from 'should';
 import { asyncmap } from 'asyncbox';
@@ -6,7 +7,7 @@ import { getModel, tensorFromImage, saveImageFromTensor, predictionFromImage,
   predictionsFromImages, DEFAULT_CONFIDENCE_THRESHOLD } from '../lib/classifier';
 import { canvasFromImage } from '../lib/image';
 
-const { TF_VERSION } = require('bindings')('test-ai-classifier');
+const { TF_VERSION, detect } = require('bindings')('test-ai-classifier');
 
 chai.use(should);
 
@@ -22,6 +23,10 @@ describe('Model', function () {
 
   it('should get the tensorflow version', function () {
     TF_VERSION.should.match(/^1\./);
+  });
+
+  it('should load a model natively', function () {
+    detect("/Users/jlipps/Desktop/objDetection/saved_model", "/Users/jlipps/Desktop/birds.jpg").should.eql("OK");
   });
 
   it('should make predictions based on model', async function () {
