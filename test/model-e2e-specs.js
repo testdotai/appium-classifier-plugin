@@ -1,8 +1,9 @@
 import path from 'path';
 import chai from 'chai';
 import should from 'should';
+import { asyncmap } from 'asyncbox';
 import { getModel, tensorFromImage, saveImageFromTensor, predictionFromImage,
-  DEFAULT_CONFIDENCE_THRESHOLD } from '../lib/classifier';
+  predictionsFromImages, DEFAULT_CONFIDENCE_THRESHOLD } from '../lib/classifier';
 import { canvasFromImage } from '../lib/image';
 
 chai.use(should);
@@ -41,6 +42,17 @@ describe('Model', function () {
   it('should make predictions based on model - unclassified', async function () {
     let pred = await predictionFromImage(await canvasFromImage(FOLDER_IMG), 0.8, "folder");
     pred[0].should.eql("unclassified");
+  });
+
+  it('should make multiple predictions at a time', async function () {
+    const imgs = await asyncmap([CART_IMG, MIC_IMG, MENU_IMG], (img) => {
+      return canvasFromImage(img);
+    });
+    const preds = await predictionsFromImages(imgs, DEFAULT_CONFIDENCE_THRESHOLD, "cart");
+    preds.should.have.length(3);
+    preds[0][0].should.eql("cart");
+    preds[1][0].should.eql("microphone");
+    preds[2][0].should.eql("menu");
   });
 
   it('should obey a confidence threshold', async function () {
