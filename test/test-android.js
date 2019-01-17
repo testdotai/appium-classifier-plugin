@@ -7,6 +7,7 @@ const ANDROID_CAPS = {
   platformName: 'Android',
   deviceName: 'Android Emulator',
   automationName: 'UiAutomator2',
+  noReset: true,
   appPackage: 'com.walmart.android',
   appActivity: '.app.main.MainActivity',
   customFindModules: {'ai': 'test-ai-classifier'},

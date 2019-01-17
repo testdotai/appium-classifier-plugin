@@ -16,6 +16,7 @@ const MODULE_PATH = path.resolve(__dirname, '..');
 const GENERAL = {
   customFindModules: {ai: MODULE_PATH},
   shouldUseCompactResponses: false,
+  noReset: true,
 };
 
 const ANDROID = {
