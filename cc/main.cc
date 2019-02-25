@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <napi.h>
+#include <math.h>
 #include "../node_modules/@tensorflow/tfjs-node/deps/include/tensorflow/c/c_api.h"
 #include "tf_utils.h"
 
@@ -18,6 +19,33 @@ void Deallocator(void* data, size_t size, void* arg) {
   TF_DeleteTensor((TF_Tensor *)data);
   *(int*)arg = 1;
 }
+
+// char* DataTypes[] = {
+//   "TF_FLOAT",
+//   "TF_DOUBLE",
+//   "TF_INT32",
+//   "TF_UINT8",
+//   "TF_INT16",
+//   "TF_INT8",
+//   "TF_STRING",
+//   "TF_COMPLEX64",
+//   "TF_COMPLEX",
+//   "TF_INT64",
+//   "TF_BOOL",
+//   "TF_QINT8",
+//   "TF_QUINT8",
+//   "TF_QINT32",
+//   "TF_BFLOAT16",
+//   "TF_QINT16",
+//   "TF_QUINT16",
+//   "TF_UINT16",
+//   "TF_COMPLEX128",
+//   "TF_HALF",
+//   "TF_RESOURCE",
+//   "TF_VARIANT",
+//   "TF_UINT32",
+//   "TF_UINT64",
+// };
 
 ImageBuffer readFile(const char* file) {
     std::ifstream image(file, std::ifstream::binary);
@@ -155,13 +183,27 @@ DetectResponse detectFromModel(const char* model_path, const char* img_path) {
         std::cout << "Shape for tensor: " << shape << std::endl;
     }
 
-    const auto boxes_data = static_cast<int*>(TF_TensorData(output_values[0]));
+    const int num_detections = TF_Dim(output_values[0], 1);
+
+    const auto boxes_data = static_cast<float*>(TF_TensorData(output_values[0]));
     const auto scores_data = static_cast<float*>(TF_TensorData(output_values[1]));
     const auto classes_data = static_cast<int*>(TF_TensorData(output_values[2]));
 
-    std::cout << "Boxes: " << boxes_data[0] << ", " << boxes_data[1] << ", " << boxes_data[2] << ", " << boxes_data[3] << std::endl;
-    std::cout << "Scores: " << scores_data[0] << ", " << scores_data[1] << ", " << scores_data[2] << ", " << scores_data[3] << std::endl;
-    std::cout << "Classes: " << classes_data[0] << ", " << classes_data[1] << ", " << classes_data[2] << ", " << classes_data[3] << std::endl;
+    float boxes[num_detections][4];
+    for (int i = 0; i < num_detections; i++) {
+        int idx = floor(i / 4);
+        boxes[idx][i % 4] = boxes_data[i];
+        std::cout << boxes_data[i] << " ";
+        if (i % 4 == 3) {
+            std::cout << std::endl;
+        }
+    }
+
+    for (int i = 0; i < num_detections; i++) {
+        if (scores_data[i] > 0.95) {
+            std::cout << "Found entity with score of: " << scores_data[i] << ". Its % bounds are: [" << boxes[i][1] << ", " << boxes[i][0] << "] -> [" << boxes[i][3] << ", " << boxes[i][2] << "]" << std::endl;
+        }
+    }
 
     // Napi::ArrayBuffer boxes_array = Napi::ArrayBuffer::New(env, TF_TensorData(output_values[0]), 8);
     // Napi::ArrayBuffer scores_array = Napi::ArrayBuffer::New(env, TF_TensorData(output_values[1]), 8);
