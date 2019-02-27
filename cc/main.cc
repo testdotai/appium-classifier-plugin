@@ -3,16 +3,16 @@
 #include <napi.h>
 #include <math.h>
 #include "../node_modules/@tensorflow/tfjs-node/deps/include/tensorflow/c/c_api.h"
-#include "tf_utils.h"
 
 struct DetectResponse {
     int status;
     const char* message;
+    Napi::Array detected;
 };
 
 struct ImageBuffer {
     char* buffer;
-    int buffer_len;
+    int bufferLen;
 };
 
 void Deallocator(void* data, size_t size, void* arg) {
@@ -20,33 +20,19 @@ void Deallocator(void* data, size_t size, void* arg) {
   *(int*)arg = 1;
 }
 
-// char* DataTypes[] = {
-//   "TF_FLOAT",
-//   "TF_DOUBLE",
-//   "TF_INT32",
-//   "TF_UINT8",
-//   "TF_INT16",
-//   "TF_INT8",
-//   "TF_STRING",
-//   "TF_COMPLEX64",
-//   "TF_COMPLEX",
-//   "TF_INT64",
-//   "TF_BOOL",
-//   "TF_QINT8",
-//   "TF_QUINT8",
-//   "TF_QINT32",
-//   "TF_BFLOAT16",
-//   "TF_QINT16",
-//   "TF_QUINT16",
-//   "TF_UINT16",
-//   "TF_COMPLEX128",
-//   "TF_HALF",
-//   "TF_RESOURCE",
-//   "TF_VARIANT",
-//   "TF_UINT32",
-//   "TF_UINT64",
-// };
+void PrintTensorDims(std::vector<TF_Tensor*> tensors) {
+    for (TF_Tensor* tensor : tensors) {
+        int dims = TF_NumDims(tensor);
+        std::string shape = "[";
+        for (int j = 0; j < dims; j++) {
+            shape = shape.append(std::to_string(TF_Dim(tensor, j))).append(", ");
+        }
+        shape = shape.append("]");
+        std::cout << "Shape for tensor: " << shape << std::endl;
+    }
+}
 
+// Get a data buffer from reading an image file
 ImageBuffer readFile(const char* file) {
     std::ifstream image(file, std::ifstream::binary);
 
@@ -58,73 +44,84 @@ ImageBuffer readFile(const char* file) {
     int len = image.tellg();
     image.seekg(0, image.beg);
 
-    std::cout << "about to create char array of " << len << " bytes" << std::endl;
-
     char* buf = new char[len];
     image.read(buf, len);
     return {buf, len};
 }
 
-DetectResponse detectFromModel(const char* model_path, const char* img_path) {
+DetectResponse detectErrorWithStatus(const char* msg, TF_Status* status, Napi::Env env) {
     DetectResponse res;
     res.status = -1;
+    res.detected = Napi::Array::New(env);
+    res.message = std::strcat(std::strcat(msg, " Message was:"), TF_Message(status));
+    TF_DeleteStatus(status);
+    return res;
+}
 
-    std::cout << "model path is: " << model_path << std::endl;
+DetectResponse detectError(const char* msg, Napi::Env env) {
+    DetectResponse res;
+    res.status = -1;
+    res.detected = Napi::Array::New(env);
+    res.message = msg;
+    return res;
+}
+
+void getEncodedImageData(const char* imgPath, size_t* totalSize, char* encodedImage) {
+    
+}
+
+TF_Tensor* constructInputTensor() {
+
+}
+
+DetectResponse detectFromModel(const char* modelPath, const char* imgPath, float detectThreshold, Napi::Env env) {
 
     TF_Graph* graph = TF_NewGraph();
     TF_Status* status = TF_NewStatus();
     const char* tags[] = {"serve"};
     TF_SessionOptions* options = TF_NewSessionOptions();
-    TF_Session* sess = TF_LoadSessionFromSavedModel(options, nullptr, model_path, tags, 1, graph, nullptr, status);
+    TF_Session* sess = TF_LoadSessionFromSavedModel(options, nullptr, modelPath, tags, 1, graph, nullptr, status);
     TF_DeleteSessionOptions(options);
 
     if (TF_GetCode(status) != TF_OK) {
-        res.message = std::strcat("Could not load saved model. Message was: ", TF_Message(status));
-        TF_DeleteStatus(status);
-        return res;
+        return detectErrorWithStatus("Could not load saved model.", status, env);
     }
 
     std::cout << "session loaded" << std::endl;
 
     TF_Output input = {TF_GraphOperationByName(graph, "encoded_image_string_tensor"), 0};
     if (input.oper == nullptr) {
-        res.message = "Could not init input oper";
-        return res;
+        return detectError("Could not init input oper", env);
     }
     std::cout << "expected dims of encoded_image_string_tensor: " << TF_GraphGetTensorNumDims(graph, input, status) << std::endl;
 
-    std::cout << "image path is: " << img_path << std::endl;
-    ImageBuffer image = readFile(img_path);
-    if (image.buffer_len == -1) {
-        res.message = "Could not read image data at path provided";
-        TF_DeleteStatus(status);
-        return res;
+    std::cout << "image path is: " << imgPath << std::endl;
+    ImageBuffer image = readFile(imgPath);
+    if (image.bufferLen == -1) {
+        return detectErrorWithStatus("Could not read image data at path provided", status, env);
     }
-    std::cout << "image data is: " << image.buffer_len << " bytes long" << std::endl;
-    int tensor_byte_offset = 8;
-    size_t encoded_size = TF_StringEncodedSize(image.buffer_len);
-    size_t total_size = encoded_size + tensor_byte_offset;
-    char encoded_image[total_size];
-    for (int i = 0; i < tensor_byte_offset; i++) {
-        encoded_image[i] = 0;
+    std::cout << "image data is: " << image.bufferLen << " bytes long" << std::endl;
+    int tensorByteOffset = 8;
+    size_t encodedSize = TF_StringEncodedSize(image.bufferLen);
+    size_t totalSize = encodedSize + tensorByteOffset;
+    char encodedImage[totalSize];
+    for (int i = 0; i < tensorByteOffset; i++) {
+        encodedImage[i] = 0;
     }
-    TF_StringEncode(image.buffer, image.buffer_len, encoded_image + tensor_byte_offset, encoded_size, status);
+    TF_StringEncode(image.buffer, image.bufferLen, encodedImage + tensorByteOffset, encodedSize, status);
 
     if (TF_GetCode(status) != TF_OK) {
-        res.message = std::strcat("Could not encode image data. Message was: ", TF_Message(status));
-        TF_DeleteStatus(status);
-        return res;
+        return detectErrorWithStatus("Could not encode image data", status, env);
     }
 
     std::cout << "constructing tensor from image data" << std::endl;
 
     const int64_t dims[1] = {1};
-    TF_Tensor* const input_tensor = TF_NewTensor(TF_STRING, dims, 1, encoded_image, total_size, &Deallocator, 0);
-    // memset(TF_TensorData(input_tensor), 0, tensor_byte_offset);
+    TF_Tensor* const input_tensor = TF_NewTensor(TF_STRING, dims, 1, encodedImage, totalSize, &Deallocator, 0);
+    // memset(TF_TensorData(input_tensor), 0, tensorByteOffset);
     std::cout << "tensor has " << TF_NumDims(input_tensor) << " dims, and length " << TF_Dim(input_tensor, 0) << " in the 0th dim" << std::endl;
     if (input_tensor == nullptr) {
-        res.message = "Could not init image input tensor";
-        return res;
+        return detectError("Could not init image input tensor", env);
     }
     TF_Output inputs[] = {input};
     TF_Tensor* input_values[] = {input_tensor};
@@ -140,8 +137,7 @@ DetectResponse detectFromModel(const char* model_path, const char* img_path) {
         TF_Output output = {TF_GraphOperationByName(graph, name.c_str()), 0};
         if (output.oper == nullptr) {
             const std::string message = "Could not init output graph name " + name;
-            res.message = message.c_str();
-            return res;
+            return detectError(message.c_str(), env);
         }
         outputs.push_back(output);
     }
@@ -153,35 +149,21 @@ DetectResponse detectFromModel(const char* model_path, const char* img_path) {
 
     if (TF_GetCode(status) != TF_OK) {
         std::cout << "error running session: " << TF_GetCode(status) << " " << TF_Message(status) << std::endl;
-        TF_DeleteStatus(status);
-        res.message = "Could not run TF session";
-        return res;
+        return detectErrorWithStatus("Could not run TF session", status, env);
     }
 
     TF_CloseSession(sess, status);
 
     if (TF_GetCode(status) != TF_OK) {
-        TF_DeleteStatus(status);
-        res.message = "Could not close TF session cleanly";
-        return res;
+        return detectErrorWithStatus("Could not close TF session cleanly", status, env);
     }
 
     TF_DeleteSession(sess, status);
     if (TF_GetCode(status) != TF_OK) {
-        TF_DeleteStatus(status);
-        res.message = "Could not delete TF session cleanly";
-        return res;
+        return detectErrorWithStatus("Could not delete TF session cleanly", status, env);
     }
 
-    for (TF_Tensor* tensor : output_values) {
-        int dims = TF_NumDims(tensor);
-        std::string shape = "[";
-        for (int j = 0; j < dims; j++) {
-            shape = shape.append(std::to_string(TF_Dim(tensor, j))).append(", ");
-        }
-        shape = shape.append("]");
-        std::cout << "Shape for tensor: " << shape << std::endl;
-    }
+    DetectResponse res;
 
     const int num_detections = TF_Dim(output_values[0], 1);
 
@@ -193,29 +175,29 @@ DetectResponse detectFromModel(const char* model_path, const char* img_path) {
     for (int i = 0; i < num_detections; i++) {
         int idx = floor(i / 4);
         boxes[idx][i % 4] = boxes_data[i];
-        std::cout << boxes_data[i] << " ";
-        if (i % 4 == 3) {
-            std::cout << std::endl;
-        }
     }
 
+    int good_detections = 0;
     for (int i = 0; i < num_detections; i++) {
-        if (scores_data[i] > 0.95) {
+        if (scores_data[i] >= detectThreshold) {
             std::cout << "Found entity with score of: " << scores_data[i] << ". Its % bounds are: [" << boxes[i][1] << ", " << boxes[i][0] << "] -> [" << boxes[i][3] << ", " << boxes[i][2] << "]" << std::endl;
+            Napi::Object detection = Napi::Object::New(env);
+            detection.Set("confidence", scores_data[i]);
+            detection.Set("ymin", boxes[i][0]);
+            detection.Set("xmin", boxes[i][1]);
+            detection.Set("ymax", boxes[i][2]);
+            detection.Set("xmax", boxes[i][3]);
+
+            res.detected.Set(good_detections, detection);
+            good_detections++;
         }
     }
 
-    // Napi::ArrayBuffer boxes_array = Napi::ArrayBuffer::New(env, TF_TensorData(output_values[0]), 8);
-    // Napi::ArrayBuffer scores_array = Napi::ArrayBuffer::New(env, TF_TensorData(output_values[1]), 8);
-    // Napi::ArrayBuffer classes_array = Napi::ArrayBuffer::New(env, TF_TensorData(output_values[2]), 8);
-
-    // clean everything up
-    // TF_DeleteTensor(input_tensor);
-    // for (TF_Tensor* tensor : output_values) {
-    //     TF_DeleteTensor(tensor);
-    // }
-    // TF_DeleteGraph(graph);
-    // TF_DeleteStatus(status);
+    for (TF_Tensor* tensor : output_values) {
+        TF_DeleteTensor(tensor);
+    }
+    TF_DeleteGraph(graph);
+    TF_DeleteStatus(status);
 
     res.status = 0;
     res.message = "OK";
@@ -224,8 +206,8 @@ DetectResponse detectFromModel(const char* model_path, const char* img_path) {
 
 Napi::Value Detect(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
-    if (info.Length() != 2) {
-        Napi::TypeError::New(env, "You need to pass in the path to a TF model, and the buffer image data").ThrowAsJavaScriptException();
+    if (info.Length() != 3) {
+        Napi::TypeError::New(env, "You need to pass in the path to a TF model, a path to the image to detect in, and a detection threshold (0-1)").ThrowAsJavaScriptException();
         return env.Null();
     }
     if (!info[0].IsString()) {
@@ -236,15 +218,20 @@ Napi::Value Detect(const Napi::CallbackInfo &info) {
         Napi::TypeError::New(env, "Image path should be passed as a string").ThrowAsJavaScriptException();
         return env.Null();
     }
-    Napi::String model_path = info[0].As<Napi::String>();
-    Napi::String img_path = info[1].As<Napi::String>();
+    if (!info[2].IsNumber()) {
+        Napi::TypeError::New(env, "Threshold should be a number").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+    Napi::String modelPath = info[0].As<Napi::String>();
+    Napi::String imgPath = info[1].As<Napi::String>();
+    Napi::Number detectThreshold = info[2].As<Napi::Number>();
     
-    DetectResponse res = detectFromModel(model_path.Utf8Value().c_str(), img_path.Utf8Value().c_str());
+    DetectResponse res = detectFromModel(modelPath.Utf8Value().c_str(), imgPath.Utf8Value().c_str(), detectThreshold.FloatValue(), env);
 
     std::cout << "done detecting" << std::endl;
 
     if (res.status == 0) {
-        return Napi::String::New(env, "OK");
+        return res.detected;
     }
     
     Napi::Error::New(env, res.message).ThrowAsJavaScriptException();
