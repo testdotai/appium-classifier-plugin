@@ -25,7 +25,7 @@ describe('Model', function () {
     TF_VERSION.should.match(/^1\./);
   });
 
-  it('should load a model natively', function () {
+  it('should load a model natively - birds', function () {
     const res = detect("/Users/jlipps/Desktop/objDetection/saved_model", "/Users/jlipps/Desktop/birds.jpg", 0.95);
     res.length.should.eql(2);
     should.exist(res[0].confidence);
