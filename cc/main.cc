@@ -50,7 +50,7 @@ ImageBuffer readFile(const char* file) {
     std::ifstream image(file, std::ifstream::binary);
 
     if (!image) {
-        return {"", -1};
+        return {nullptr, -1};
     }
 
     image.seekg(0, image.end);
@@ -168,8 +168,8 @@ bool Detection::setImageTensor() {
     std::cout << "constructing tensor from image data" << std::endl;
 
     // the image tensor will be 1-dimensional
-    std::vector<const int64_t> dims = {1};
-    imageTensor = TF_NewTensor(TF_STRING, dims.data(), dims.size(), encodedImage, totalSize, &Deallocator, 0);
+    const int64_t dims[] = {1};
+    imageTensor = TF_NewTensor(TF_STRING, dims, 1, encodedImage, totalSize, &Deallocator, 0);
 
     std::cout << "tensor has " << TF_NumDims(imageTensor) << " dims, and length " << TF_Dim(imageTensor, 0) << " in the 0th dim" << std::endl;
 
