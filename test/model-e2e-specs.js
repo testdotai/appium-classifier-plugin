@@ -25,7 +25,7 @@ describe('Model', function () {
   });
 
   it('should load a model natively - birds', function () {
-    const res = detect("/Users/jlipps/Desktop/objDetection/saved_model", "/Users/jlipps/Desktop/birds.jpg", 0.95);
+    const res = detect("/Users/jlipps/Desktop/objDetection/saved_model", "/Users/jlipps/Desktop/birds.jpg", 0.95, true);
     res.length.should.eql(2);
     should.exist(res[0].confidence);
     res[0].ymin.should.be.above(0.5);
@@ -35,7 +35,7 @@ describe('Model', function () {
   });
 
   it('should load a model natively - mobile', function () {
-    const res = detect("/Users/jlipps/Desktop/objDetection/saved_model", "/Users/jlipps/Desktop/screen.jpg", 0.95);
+    const res = detect("/Users/jlipps/Desktop/objDetection/saved_model", "/Users/jlipps/Desktop/screen.jpg", 0.95, true);
     console.log(res);
   });
 

@@ -5,7 +5,7 @@
     "cflags_cc!": [ "-fno-exceptions" ],
     "sources": [
       "cc/main.cc",
-      "cc/tf_utils.cc"
+      "cc/detection.cc"
     ],
     'include_dirs': [
       "<!@(node -p \"require('node-addon-api').include\")"
