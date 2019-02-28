@@ -33,7 +33,7 @@ void Deallocator(void* data, size_t size, void* arg) {
   *(int*)arg = 1;
 }
 
-void PrintTensorDims(std::vector<TF_Tensor*> tensors) {
+void printTensorDims(std::vector<TF_Tensor*> tensors) {
     for (TF_Tensor* tensor : tensors) {
         int dims = TF_NumDims(tensor);
         std::string shape = "[";
@@ -63,6 +63,12 @@ ImageBuffer readFile(const char* file) {
 }
 
 class Detection {
+    public:
+        Detection (std::string modelPath, std::string imgPath, float detectThreshold);
+        void detect ();
+        DetectResponse getDetectResponse (Napi::Env env);
+
+    private:
         TF_Graph* graph;
         TF_Status* status;
         TF_Session* session;
@@ -75,7 +81,6 @@ class Detection {
         int totalImgSize;
         TF_Tensor* imageTensor;
         SessionArgs sessionArgs;
-        Napi::Env env;
 
         bool initSession ();
         bool setError(std::string msg);
@@ -84,19 +89,13 @@ class Detection {
         bool initOperations();
         bool runSession();
         void cleanup();
-        Napi::Array buildNodeValues();
-    public:
-        Detection (std::string modelPath, std::string imgPath, float detectThreshold, Napi::Env env);
-        void detect ();
-        DetectResponse getDetectResponse ();
-
+        Napi::Array buildNodeValues(Napi::Env env);
 };
 
-Detection::Detection (std::string modelPath, std::string imgPath, float detectThreshold, Napi::Env env) {
+Detection::Detection (std::string modelPath, std::string imgPath, float detectThreshold) {
     this->modelPath = modelPath;
     this->imgPath = imgPath;
     this->detectThreshold = detectThreshold;
-    this->env = env;
     response.status = -1; // set the detection status to failed by default
 }
 
@@ -113,9 +112,9 @@ bool Detection::initSession () {
     status = TF_NewStatus();
 
     // initialize a tensorflow session
-    const char* tags[] = {"serve"};
+    std::vector<const char*> tags = {"serve"};
     TF_SessionOptions* options = TF_NewSessionOptions();
-    session = TF_LoadSessionFromSavedModel(options, nullptr, modelPath.c_str(), tags, 1, graph, nullptr, status);
+    session = TF_LoadSessionFromSavedModel(options, nullptr, modelPath.c_str(), tags.data(), 1, graph, nullptr, status);
     TF_DeleteSessionOptions(options);
 
     if (TF_GetCode(status) != TF_OK) {
@@ -126,7 +125,7 @@ bool Detection::initSession () {
 }
 
 bool Detection::setErrorWithStatus(std::string msg) {
-    response.message = msg + " Message was:" + TF_Message(status);
+    response.message = msg + " Message was: " + TF_Message(status);
     TF_DeleteStatus(status);
     return false;
 }
@@ -169,8 +168,8 @@ bool Detection::setImageTensor() {
     std::cout << "constructing tensor from image data" << std::endl;
 
     // the image tensor will be 1-dimensional
-    const int64_t dims[1] = {1};
-    imageTensor = TF_NewTensor(TF_STRING, dims, 1, encodedImage, totalSize, &Deallocator, 0);
+    std::vector<const int64_t> dims = {1};
+    imageTensor = TF_NewTensor(TF_STRING, dims.data(), dims.size(), encodedImage, totalSize, &Deallocator, 0);
 
     std::cout << "tensor has " << TF_NumDims(imageTensor) << " dims, and length " << TF_Dim(imageTensor, 0) << " in the 0th dim" << std::endl;
 
@@ -190,7 +189,8 @@ bool Detection::initOperations() {
 
     sessionArgs.inputs.push_back(input);
 
-    if (!setImageTensor()) return;
+    if (!setImageTensor()) return false;
+
     sessionArgs.inputValues.push_back(imageTensor);
 
     std::vector<std::string> outputNames = {
@@ -255,15 +255,21 @@ bool Detection::runSession () {
 
     response.status = 0; // we've gotten all the data out, so status is successful
     response.message = "OK";
-    response.detected = buildNodeValues();
     return true;
 }
 
-DetectResponse Detection::getDetectResponse () {
+DetectResponse Detection::getDetectResponse (Napi::Env env) {
+    // if we had a failure, no need to do anything, just return response
+    if (response.status == -1) {
+        return response;
+    }
+
+    // otherwise build node values from response
+    response.detected = buildNodeValues(env);
     return response;
 }
 
-Napi::Array Detection::buildNodeValues () {
+Napi::Array Detection::buildNodeValues (Napi::Env env) {
     std::vector<std::vector<float>> boxMatrix;
     for (int i = 0; i < data.numDetections; i++) {
         int idx = floor(i / 4);
@@ -320,9 +326,9 @@ Napi::Value Detect(const Napi::CallbackInfo &info) {
     Napi::String imgPath = info[1].As<Napi::String>();
     Napi::Number detectThreshold = info[2].As<Napi::Number>();
 
-    Detection detection = Detection(modelPath.Utf8Value(), imgPath.Utf8Value(), detectThreshold.FloatValue(), env);
+    Detection detection = Detection(modelPath.Utf8Value(), imgPath.Utf8Value(), detectThreshold.FloatValue());
     detection.detect();
-    DetectResponse res = detection.getDetectResponse();
+    DetectResponse res = detection.getDetectResponse(env);
 
     if (res.status == 0) {
         return res.detected;
