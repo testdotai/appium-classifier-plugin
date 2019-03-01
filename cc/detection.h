@@ -5,13 +5,15 @@
 #include <napi.h>
 #include "../node_modules/@tensorflow/tfjs-node/deps/include/tensorflow/c/c_api.h"
 
+using namespace std;
+
 // Container for a detection result, which could be a failure with an error message
 struct DetectResponse {
     // result status: 0 for success, -1 for failure
     int status;
 
     // error message
-    std::string message;
+    string message;
 
     // array of detected object data
     Napi::Array detected;
@@ -20,16 +22,16 @@ struct DetectResponse {
 // Container for the arguments to the TF run session command
 struct SessionArgs {
     // TF operations representing the inputs
-    std::vector<TF_Output> inputOps;
+    vector<TF_Output> inputOps;
 
     // Actual input tensors
-    std::vector<TF_Tensor*> inputVals;
+    vector<TF_Tensor*> inputVals;
 
     // TF operations representing the outputs
-    std::vector<TF_Output> outputOps;
+    vector<TF_Output> outputOps;
 
     // Empty array of output tensors (will be filled with output data by TF)
-    std::vector<TF_Tensor*> outputVals;
+    vector<TF_Tensor*> outputVals;
 };
 
 // Container for the result of a TF run
@@ -39,10 +41,10 @@ struct DetectionData {
     
     // flat array of coordinate data of detected objects
     // coordinates are in ratio of image height/width
-    std::vector<float> boxes;
+    vector<float> boxes;
 
     // array of score (confidence) data (0-1)
-    std::vector<float> scores;
+    vector<float> scores;
 };
 
 // Container for the image's data and size
@@ -55,16 +57,16 @@ struct ImageBuffer {
 void Deallocator(void* data, size_t size, void* arg);
 
 // (currently-unused) helper function to print the dimensions of a tensor
-void printTensorDims(std::vector<TF_Tensor*> tensors);
+void printTensorDims(vector<TF_Tensor*> tensors);
 
 // Get a data buffer from reading a file. Used to get the raw binary data from the image
-ImageBuffer readFile(std::string file);
+ImageBuffer readFile(string file);
 
 // Class representing an attempt to detect objects in an image using TF
 class Detection {
     public:
         // Constructor for the Detection class
-        Detection (std::string modelPath, std::string imgPath, float detectThreshold, bool debug);
+        Detection (string modelPath, string imgPath, float detectThreshold, bool debug);
 
         // Run through the detection process and short-circuit if any step fails
         void detect ();
@@ -77,8 +79,8 @@ class Detection {
         TF_Status* status;       // TF status object reused in most TF commands
         TF_Session* session;     // TF session used to run the detection
         float detectThreshold;   // Confidence (0-1) below which results will be ignored
-        std::string modelPath;   // Path to the saved TF model
-        std::string imgPath;     // Path to the image in which to detect objects
+        string modelPath;        // Path to the saved TF model
+        string imgPath;          // Path to the image in which to detect objects
         DetectionData data;      // Data output from the TF session
         DetectResponse response; // Container for response to the main process
         char* encodedImage;      // Image data encoded in TF format for use as input in the graph
@@ -87,10 +89,10 @@ class Detection {
         bool debug;              // Whether or not to show debug output
 
         // Helper function to set the class-internal response message
-        bool setError(std::string msg);
+        bool setError(string msg);
 
         // Helper function to extract error message from TF status and clean up
-        bool setErrorWithStatus (std::string msg);
+        bool setErrorWithStatus (string msg);
 
         // Set up the TF graph and session
         bool initSession ();
