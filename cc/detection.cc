@@ -2,12 +2,12 @@
 #include <fstream>
 #include <math.h>
 
-void Deallocator(void* data, size_t size, void* arg) {
+void Deallocator (void* data, size_t size, void* arg) {
   TF_DeleteTensor((TF_Tensor *)data);
   *(int*)arg = 1;
 }
 
-void printTensorDims(std::vector<TF_Tensor*> tensors) {
+void printTensorDims (std::vector<TF_Tensor*> tensors) {
     for (TF_Tensor* tensor : tensors) {
         int dims = TF_NumDims(tensor);
         std::string shape = "[";
@@ -19,8 +19,7 @@ void printTensorDims(std::vector<TF_Tensor*> tensors) {
     }
 }
 
-// Get a data buffer from reading an image file
-ImageBuffer readFile(std::string file) {
+ImageBuffer readFile (std::string file) {
     std::ifstream filedata(file, std::ifstream::binary);
 
     if (!filedata) {
@@ -40,11 +39,13 @@ Detection::Detection (std::string modelPath, std::string imgPath, float detectTh
     this->modelPath = modelPath;
     this->imgPath = imgPath;
     this->detectThreshold = detectThreshold;
-    this->debug = debug;
+    this->debug = debug;  // whether or not to print debug output
     response.status = -1; // set the detection status to failed by default
 }
 
 void Detection::detect () {
+    // If any subroutine fails, short-circuit and return, and wait for the caller to call 
+    // getDetectResponse
     if (!initSession()) return;
     if (!initOperations()) return;
     if (!runSession()) return;
@@ -52,13 +53,14 @@ void Detection::detect () {
 }
 
 bool Detection::initSession () {
-    // set up the tensorflow graph and status containers
     graph = TF_NewGraph();
     status = TF_NewStatus();
 
-    // initialize a tensorflow session
+    // "serve" is the magic tag to get the model in the mode we want
     std::vector<const char*> tags = {"serve"};
     TF_SessionOptions* options = TF_NewSessionOptions();
+
+    // get the session out of the model path
     session = TF_LoadSessionFromSavedModel(options, nullptr, modelPath.c_str(), tags.data(), 1, graph, nullptr, status);
     TF_DeleteSessionOptions(options);
 
@@ -103,7 +105,7 @@ bool Detection::setImageTensor() {
         encodedImage[i] = 0;
     }
 
-    // direct TF to encode our image data into the encodedImage var
+    // direct TF to encode our image data into the encodedImage var, 8 bytes in
     TF_StringEncode(image.buffer, image.bufferLen, encodedImage + tensorByteOffset, encodedSize, status);
 
     if (TF_GetCode(status) != TF_OK) {
@@ -128,9 +130,10 @@ bool Detection::setImageTensor() {
 }
 
 bool Detection::initOperations() {
+    // TF_Output is a struct with a graph operation and an index. Our indexes are all 0
     TF_Output input = {TF_GraphOperationByName(graph, "encoded_image_string_tensor"), 0};
     if (input.oper == nullptr) {
-        return setError("Could not init input oper.");
+        return setError("Could not init input operation.");
     }
     
     if (debug) std::cout << "expected dims of encoded_image_string_tensor: " 
@@ -154,18 +157,23 @@ bool Detection::initOperations() {
     for (std::string name : outputNames) {
         TF_Output output = {TF_GraphOperationByName(graph, name.c_str()), 0};
         if (output.oper == nullptr) {
-            const std::string message = "Could not init output graph name " + name;
+            const std::string message = "Could not init output graph " + name;
             return setError(message);
         }
         sessionArgs.outputOps.push_back(output);
     }
     sessionArgs.outputVals = std::vector<TF_Tensor*>(4);
     
-    if (debug) std::cout << "running session with input values size " << sessionArgs.inputVals.size() 
+    if (debug) std::cout << "will run session with input values size " << sessionArgs.inputVals.size() 
                          << " and output values size " << sessionArgs.outputVals.size() 
                          << " and inputs size " << sessionArgs.inputOps.size() 
                          << " and outputs size " << sessionArgs.outputOps.size() << std::endl;
 
+    return true;
+}
+
+bool Detection::runSession () {
+    // finally, actually run the session
     TF_SessionRun(
         session, 
         nullptr, 
@@ -184,30 +192,31 @@ bool Detection::initOperations() {
         return setErrorWithStatus("Could not run TF session.");
     }
 
+    // close the session afterward
     TF_CloseSession(session, status);
-
     if (TF_GetCode(status) != TF_OK) {
         return setErrorWithStatus("Could not close TF session cleanly.");
     }
 
+    // and delete it too
     TF_DeleteSession(session, status);
     if (TF_GetCode(status) != TF_OK) {
         return setErrorWithStatus("Could not delete TF session cleanly.");
     }
 
+    // get the bounds and scores data as flat float arrays from the output tensors
     float* boxesData = static_cast<float*>(TF_TensorData(sessionArgs.outputVals[0]));
     float* scoresData = static_cast<float*>(TF_TensorData(sessionArgs.outputVals[1]));
 
+    // the number of detections we found will be the length of the 1st dimension of an output tensor
     data.numDetections = TF_Dim(sessionArgs.outputVals[0], 1);
+
+    // use the vector methods to put the raw data into c++ vectors more easy to work with
     data.boxes.assign(boxesData, boxesData + data.numDetections);
     data.scores.assign(scoresData, scoresData + data.numDetections);
 
     response.status = 0; // we've gotten all the data out, so status is successful
     response.message = "OK";
-    return true;
-}
-
-bool Detection::runSession () {
     return true;
 }
 
@@ -223,7 +232,8 @@ DetectResponse Detection::getDetectResponse (Napi::Env env) {
 }
 
 Napi::Array Detection::buildNodeValues (Napi::Env env) {
-
+    // data.boxes comes in as a flat array, but every set of 4 values actually corresponds
+    // to a single detected object. what we want is a 2-dim vector instead.
     std::vector<std::vector<float>> boxMatrix(data.numDetections, std::vector<float>(4));
     for (int i = 0; i < data.numDetections; i++) {
         int idx = floor(i / 4);
@@ -231,12 +241,14 @@ Napi::Array Detection::buildNodeValues (Napi::Env env) {
     }
 
     Napi::Array detected = Napi::Array::New(env);
-    int goodDetections = 0;
+    int goodDetections = 0; // the number of detections which passed the confidence threshold
     for (int i = 0; i < data.numDetections; i++) {
         if (data.scores[i] >= detectThreshold) {
             if (debug) std::cout << "Found entity with score of: " << data.scores[i] << ". Its % bounds are: [" 
                                  << boxMatrix[i][1] << ", " << boxMatrix[i][0] << "] -> [" << boxMatrix[i][3] 
                                  << ", " << boxMatrix[i][2] << "]" << std::endl;
+
+            // construct a node object with the response data, including bounds and confidence
             Napi::Object detection = Napi::Object::New(env);
             detection.Set("confidence", data.scores[i]);
             detection.Set("xmin", boxMatrix[i][1]);
@@ -244,6 +256,8 @@ Napi::Array Detection::buildNodeValues (Napi::Env env) {
             detection.Set("xmax", boxMatrix[i][3]);
             detection.Set("ymax", boxMatrix[i][2]);
 
+            // add the object to the array at the index corresponding to goodDetections
+            // and increment, so we add items to the array without any gaps
             detected.Set(goodDetections, detection);
             goodDetections++;
         }
@@ -258,5 +272,5 @@ void Detection::cleanup () {
     }
     TF_DeleteGraph(graph);
     TF_DeleteStatus(status);
-    free(encodedImage);
+    free(encodedImage); // since we 'malloc'ed this earlier
 }
