@@ -6,8 +6,6 @@ import { getModel, tensorFromImage, saveImageFromTensor, predictionFromImage,
   predictionsFromImages, DEFAULT_CONFIDENCE_THRESHOLD } from '../lib/classifier';
 import { canvasFromImage } from '../lib/image';
 
-const { TF_VERSION, detect } = require('bindings')('test-ai-classifier');
-
 chai.use(should);
 
 const CART_IMG = path.resolve(__dirname, "..", "..", "test", "fixtures", "cart.png");
@@ -18,25 +16,6 @@ const MENU_IMG = path.resolve(__dirname, "..", "..", "test", "fixtures", "menu.p
 describe('Model', function () {
   it('should load the model', async function () {
     await getModel();
-  });
-
-  it('should get the tensorflow version', function () {
-    TF_VERSION.should.match(/^1\./);
-  });
-
-  it('should load a model natively - birds', function () {
-    const res = detect("/Users/jlipps/Desktop/objDetection/saved_model", "/Users/jlipps/Desktop/birds.jpg", 0.95, true);
-    res.length.should.eql(2);
-    should.exist(res[0].confidence);
-    res[0].ymin.should.be.above(0.5);
-    res[0].ymin.should.be.below(0.6);
-    res[1].ymin.should.be.above(0.1);
-    res[1].ymin.should.be.below(0.2);
-  });
-
-  it('should load a model natively - mobile', function () {
-    const res = detect("/Users/jlipps/Desktop/objDetection/saved_model", "/Users/jlipps/Desktop/screen.jpg", 0.95, true);
-    console.log(res);
   });
 
   it.skip('should load and save a tensor', async function () {
