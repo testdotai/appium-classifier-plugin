@@ -2,6 +2,7 @@ import wd from 'wd';
 import path from 'path';
 import chai from 'chai';
 import should from 'should';
+import B from 'bluebird';
 
 chai.use(should);
 
@@ -16,6 +17,7 @@ const MODULE_PATH = path.resolve(__dirname, '..');
 const GENERAL = {
   customFindModules: {ai: MODULE_PATH},
   shouldUseCompactResponses: false,
+  testaiAllowWeakerMatches: true,
   noReset: true,
 };
 
@@ -46,51 +48,56 @@ const PHOTOS = {
   ...IOS,
 };
 
-describe('Finding - Android', function () {
-  let driver;
+function setup (caps, testTimeout = 180000, implicitWaitTimeout = 40000) {
+  let test = {};
 
   before(async function () {
-    this.timeout(120000);
-    driver = wd.promiseChainRemote(APPIUM);
-    await driver.init(WALMART);
-    await driver.setImplicitWaitTimeout(20000);
+    this.timeout(testTimeout);
+    test.driver = wd.promiseChainRemote(APPIUM);
+    await test.driver.init(caps);
+    await test.driver.setImplicitWaitTimeout(implicitWaitTimeout);
   });
 
   after(async function () {
-    if (driver) {
-      await driver.quit();
+    if (test.driver) {
+      await test.driver.quit();
     }
   });
 
+  return test;
+}
+
+describe('Finding by element - Android', function () {
+  const t = setup(WALMART);
+
   it('should find an element by its label', async function () {
     this.timeout(90000);
-    await driver.elementByAccessibilityId('Open navigation drawer');
-    await driver.elementByCustom('ai:cart').click();
-    await driver.elementByAccessibilityId('Estimated Tax');
+    await t.driver.elementByAccessibilityId('Open navigation drawer');
+    await t.driver.elementByCustom('ai:menu').click();
+    await t.driver.elementByXPath('//android.widget.CheckedTextView[@text="Shop by Department"]');
+  });
+
+});
+
+describe('Finding by object detection - Android', function () {
+  const t = setup({testaiFindMode: 'object_detection', ...WALMART}, 180000, 180000);
+
+  it('should find an element using the object detection strategy', async function () {
+    this.timeout(180000);
+    await t.driver.elementByAccessibilityId('Open navigation drawer');
+    await t.driver.elementByCustom('ai:menu').click();
+    await t.driver.elementByXPath('//android.widget.CheckedTextView[@text="Shop by Department"]');
   });
 });
 
 describe('Finding - iOS', function () {
-  let driver;
-
-  before(async function () {
-    this.timeout(120000);
-    driver = wd.promiseChainRemote(APPIUM);
-    await driver.init(PHOTOS);
-    await driver.setImplicitWaitTimeout(20000);
-  });
-
-  after(async function () {
-    if (driver) {
-      await driver.quit();
-    }
-  });
+  const t = setup(PHOTOS, 120000, 20000);
 
   // this test assumes you've launched the app and hit 'continue' to the
   // 'what's new in photos' interstitial
   it('should find an element by its label', async function () {
     this.timeout(90000);
-    await driver.elementByCustom('ai:search').click();
-    await driver.elementByAccessibilityId('Cancel');
+    await t.driver.elementByCustom('ai:search').click();
+    await t.driver.elementByAccessibilityId('Cancel');
   });
 });

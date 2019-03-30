@@ -9,10 +9,13 @@ import { canvasFromImage } from '../lib/image';
 
 chai.use(should);
 
-const CART_IMG = path.resolve(__dirname, "..", "..", "test", "fixtures", "cart.png");
-const MIC_IMG = path.resolve(__dirname, "..", "..", "test", "fixtures", "microphone.png");
-const FOLDER_IMG = path.resolve(__dirname, "..", "..", "test", "fixtures", "folder.png");
-const MENU_IMG = path.resolve(__dirname, "..", "..", "test", "fixtures", "menu.png");
+const FIXTURES = path.resolve(__dirname, "..", "..", "test", "fixtures");
+
+const CART_IMG = path.resolve(FIXTURES, "cart.png");
+const MIC_IMG = path.resolve(FIXTURES, "microphone.png");
+const FOLDER_IMG = path.resolve(FIXTURES, "folder.png");
+const MENU_IMG = path.resolve(FIXTURES, "menu.png");
+const TINY_MENU_IMG = path.resolve(FIXTURES, "menu_small.png");
 
 describe('Model', function () {
   it('should load the model', async function () {
@@ -57,6 +60,11 @@ describe('Model', function () {
   it('should make predictions based on model - menu', async function () {
     let pred = await predictionFromImage(await canvasFromImage(MENU_IMG), DEFAULT_CONFIDENCE_THRESHOLD, "menu");
     pred[0].should.eql("menu");
+  });
+
+  it('should make predictions based on model - tiny menu', async function () {
+    let pred = await predictionFromImage(await canvasFromImage(TINY_MENU_IMG), DEFAULT_CONFIDENCE_THRESHOLD, "menu");
+    pred[1].should.be.above(DEFAULT_CONFIDENCE_THRESHOLD);
   });
 
   it('should make predictions based on model - unclassified', async function () {
