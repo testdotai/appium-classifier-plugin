@@ -41,6 +41,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@tensorflow/tfjs-node": "0.x",
+    "appium-base-driver": "^3.15.4",
     "appium-support": "2.x",
     "asyncbox": "2.x",
     "bindings": "1.x",
