@@ -90,7 +90,7 @@ describe('Finding by object detection - Android', function () {
   });
 });
 
-describe('Finding - iOS', function () {
+describe('Finding by element - iOS', function () {
   const t = setup(PHOTOS, 120000, 20000);
 
   // this test assumes you've launched the app and hit 'continue' to the
@@ -99,5 +99,23 @@ describe('Finding - iOS', function () {
     this.timeout(90000);
     await t.driver.elementByCustom('ai:search').click();
     await t.driver.elementByAccessibilityId('Cancel');
+  });
+});
+
+describe('Finding by object detection - iOS', function () {
+  const t = setup({
+    testaiFindMode: 'object_detection',
+    testaiObjDetectionThreshold: 0.9,
+    ...PHOTOS
+  }, 120000, 20000);
+
+  // this test assumes you've launched the app and hit 'continue' to the
+  // 'what's new in photos' interstitial
+  it('should find an element by its label', async function () {
+    this.timeout(90000);
+    await t.driver.elementByCustom('ai:cloud').click();
+    await B.delay(5000);
+    console.log(await t.driver.source());
+    await t.driver.elementByAccessibilityId('Start Sharing');
   });
 });
