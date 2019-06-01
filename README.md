@@ -41,14 +41,21 @@ the XCUITest driver (for iOS) or the UiAutomator2 or Espresso drivers (for
 Android). The older iOS and Android drivers do not support the required Appium
 capabilities, and are deprecated in any case.
 
+If you wish to take advantage of the object detection mode for the plugin (see
+below), you'll need Appium 1.13.0 or higher.
+
 ## Classifier Setup
 
-To make this plugin available to Appium, simply go to the main Appium repo, and
-run `npm install test-ai-classifier` to install this plugin into Appium's
-dependency tree and make it available.
+To make this plugin available to Appium, you have three options:
 
-Otherwise, install it somewhere on your filesystem and use an absolute path as
-the module name (see below).
+1. Simply go to the directory where Appium is installed (whether a git clone,
+   or installed in the global `node_modules` directory by NPM), and run `npm
+   install test-ai-classifier` to install this plugin into Appium's dependency
+   tree and make it available.
+2. Install it anywhere on your filesystem and use an absolute path as the
+   module name (see below).
+3. Install it globally (`npm install -g test-ai-classifier`) and make sure your
+   `NODE_PATH` is set to the global `node_modules` dir.
 
 ## Usage
 
@@ -59,7 +66,8 @@ requested, send in the module name and a selector shortcut as the
 `customFindModules` capability to something like `{"ai": "test-ai-classifier"}`
 (here `ai` is the "selector shortcut" and `test-ai-classifier` is the "module
 name"). This will enable access to the plugin when using selectors of the form
-`ai:foo`.
+`ai:foo` (or simply `foo` if this is the only custom find module you are using
+with Appium).
 
 In addition to this capability, you'll need to set another Appium capability,
 `shouldUseCompactResponses`, to `false`. This directs Appium to include extra
@@ -79,7 +87,7 @@ How did we know we could use "cart" as a label? There is a predefined list of
 available labels in `lib/labels.js`--check there to see if the elements you
 want to find match any of them.
 
-### Match confidence
+### Match Confidence
 
 Using the `testaiConfidenceThreshold` capability, you can set a confidence
 threshold below which the plugin will refuse to consider elements as matching
@@ -90,6 +98,49 @@ This is a useful capability to set after reading the Appium logs from a failed
 element find; this plugin will tell you what the highest confidence of any
 element that matched your label was, so you could use that to modulate the
 confidence value. The default confidence level is `0.2`.
+
+### Element Discovery Mode
+
+There are two ways that this plugin can attempt to find elements:
+
+1. The default mode uses Appium to get a list of all leaf-node elements, and
+   can be specified by setting the `testaiFindMode` capability to
+   `element_lookup`. Images of these elements are collected and sent to the
+   test.ai classifier for labeling. Matched elements are returned to your test
+   script as full-blown `WebElement`s, just as if you were using any of the
+   standard Appium locator strategies.
+2. The alternative mode takes a single screenshot, and uses an object detection
+   network to attempt to identify screen regions of interest. These regions are
+   then sent into the classifier for labeling. Matched regions are returned to
+   your test script as Appium ImageElements (meaning that all you can do with
+   them is click/tap them). This mode can be specified by setting the
+   `testaiFindMode` capability to `object_detection`.
+
+Each of these modes comes with different benefits and drawbacks:
+
+#### Pros/cons of `element_lookup` mode
+
+Element lookup mode returns full-blown elements to your test script, which
+means you can perform any standard actions on them. However, leaf-node elements
+are not always easy for the classifier to label. For example, in iOS it is
+common to have a single element with both an icon and text as part of the
+element, and this kind of element will never be labeled with high confidence.
+Element lookup mode is also especially slow in cases where there are many
+elements.
+
+#### Pros/cons of `object_detection` mode
+
+Object detection mode is not limited to actual UI elements, as it deals only
+with an image of the screen. So, it can accurately find icons to label even if
+those icons are mixed with other content in their UI element form. Object
+detection is currently slow, but in principle it is faster (at least in the
+limit) than element lookup mode. The main drawback is that elements returned to
+your script are really just representations of screen regions, not full-blown
+UI elements. So all that can be done with them is clicking/tapping them (of
+course, that's typically all you would do with an icon anyway).
+
+Object detection mode also relies on C/C++ code which is built on install. This
+code is portable but may not compile on some systems.
 
 ## Development
 
