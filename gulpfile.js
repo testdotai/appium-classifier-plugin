@@ -6,6 +6,7 @@ let gulp = require('gulp'),
 
 boilerplate({
   build: 'test-ai-classifier',
+  transpileOut: 'build-js',
   coverage: {
     files: ['./test/unit/**/*-specs.js', '!./test/functional/**'],
     verbose: true

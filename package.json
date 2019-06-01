@@ -4,17 +4,18 @@
   "description": "Appium semantic label plugin",
   "homepage": "https://github.com/testdotai/appium-classifier-plugin#readme",
   "bugs": "https://github.com/testdotai/appium-classifier-plugin/issues",
-  "main": "./build/index.js",
+  "main": "./build-js/index.js",
   "gypfile": true,
   "scripts": {
-    "clean-js": "rm -rf node_modules && rm -f package-lock.json && npm install",
-    "clean-cc": "node-gyp clean",
+    "clean-js": "rm -rf node_modules && rm -f package-lock.json && rm -rf build-js && npm install",
+    "clean-cc": "node-gyp clean && rm -rf build",
     "clean": "npm run clean-js && npm run clean-cc",
     "build-js": "gulp transpile",
     "build-cc": "node-gyp rebuild",
     "build": "npm run build-cc && npm run build-js",
     "mocha": "mocha",
     "prepublish": "gulp prepublish",
+    "postinstall": "node ./postinstall.js",
     "test": "gulp once",
     "e2e-test": "gulp e2e-test",
     "watch": "gulp watch",
@@ -23,10 +24,13 @@
     "lint:fix": "gulp eslint --fix"
   },
   "files": [
-    "build",
+    "build-js",
+    "cc",
     "lib",
     "model",
     "index.js",
+    "binding.gyp",
+    "gulpfile.js",
     "README.md"
   ],
   "keywords": [
@@ -48,7 +52,8 @@
     "bluebird": "3.x",
     "canvas": "2.x",
     "lodash": "4.x",
-    "node-addon-api": "1.x"
+    "node-addon-api": "1.x",
+    "request-promise": "^4.2.4"
   },
   "devDependencies": {
     "appium-gulp-plugins": "3.x",
