@@ -38,8 +38,8 @@ const WALMART = {
 
 const IOS = {
   platformName: 'iOS',
-  deviceName: 'iPhone 6',
-  platformVersion: '11.4',
+  deviceName: 'iPhone 8',
+  platformVersion: '12.2',
   ...GENERAL,
 };
 
@@ -84,6 +84,7 @@ describe('Finding by object detection - Android', function () {
 
   it('should find an element using the object detection strategy', async function () {
     this.timeout(180000);
+    await t.driver.updateSettings({checkForImageElementStaleness: false});
     await t.driver.elementByAccessibilityId('Open navigation drawer');
     await t.driver.elementByCustom('ai:menu').click();
     await t.driver.elementByXPath('//android.widget.CheckedTextView[@text="Shop by Department"]');
@@ -112,10 +113,10 @@ describe('Finding by object detection - iOS', function () {
   // this test assumes you've launched the app and hit 'continue' to the
   // 'what's new in photos' interstitial
   it('should find an element by its label', async function () {
+    await t.driver.updateSettings({checkForImageElementStaleness: false});
     this.timeout(90000);
-    await t.driver.elementByCustom('ai:cloud').click();
+    await t.driver.elementByCustom('ai:search').click();
     await B.delay(5000);
-    console.log(await t.driver.source());
-    await t.driver.elementByAccessibilityId('Start Sharing');
+    await t.driver.elementByAccessibilityId('No Suggestions');
   });
 });
