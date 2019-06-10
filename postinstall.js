@@ -1,3 +1,4 @@
+#! /usr/bin/env node
 /* eslint-disable no-console */
 /* eslint-disable promise/prefer-await-to-then */
 /* eslint-disable promise/prefer-await-to-callbacks */
@@ -16,6 +17,6 @@ if (module === require.main) {
   } else {
     console.error("Not downloading object detection model because built code " +
                   "doesn't exist. First run `npm run build` and then " +
-                  "`./build-js/download.js`");
+                  "`./postinstall.js`");
   }
 }
