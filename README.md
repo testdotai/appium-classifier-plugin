@@ -36,7 +36,10 @@ TBD (not yet tested or supported)
 ## Appium Setup
 
 Appium's element finding plugin feature is experimental, so you will need to be
-using Appium version 1.9.2-beta.2 at a minimum.
+using Appium version 1.9.2-beta.2 at a minimum. Also, be sure you either using
+the XCUITest driver (for iOS) or the UiAutomator2 or Espresso drivers (for
+Android). The older iOS and Android drivers do not support the required Appium
+capabilities, and are deprecated in any case.
 
 If you wish to take advantage of the object detection mode for the plugin (see
 below), you'll need Appium 1.13.0 or higher.
