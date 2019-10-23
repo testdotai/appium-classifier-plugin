@@ -29,6 +29,7 @@
     "lib",
     "model",
     "index.js",
+    "postinstall.js",
     "binding.gyp",
     "gulpfile.js",
     "README.md"
