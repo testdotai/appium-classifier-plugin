@@ -47,6 +47,11 @@ const PHOTOS = {
   ...IOS,
 };
 
+const FILES_IOS = {
+  bundleId: 'com.apple.DocumentsApp',
+  ...IOS,
+};
+
 function setup (caps, testTimeout = 180000, implicitWaitTimeout = 40000) {
   let test = {};
 
@@ -122,5 +127,22 @@ describe('Finding by object detection - iOS', function () {
     await t.driver.elementByCustom('ai:search').click();
     await B.delay(5000);
     await t.driver.elementByAccessibilityId('October 2009');
+  });
+});
+
+describe('Finding grouped icon - iOS', function () {
+  const t = setup({
+    testaiFindMode: 'object_detection',
+    testaiObjDetectionDebug: true,
+    testaiObjDetectionThreshold: 0.9,
+    ...FILES_IOS
+  }, 120000, 20000);
+
+  it('should find an element by its label', async function () {
+    this.timeout(90000);
+    await t.driver.updateSettings({checkForImageElementStaleness: false});
+    await t.driver.elementByAccessibilityId('Browse').click();
+    await t.driver.elementByCustom('ai:clock').click();
+    await t.driver.elementByAccessibilityId('No Recents');
   });
 });
