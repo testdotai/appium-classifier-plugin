@@ -79,7 +79,11 @@ describe('Finding by element - Android', function () {
 });
 
 describe('Finding by object detection - Android', function () {
-  const t = setup({testaiFindMode: 'object_detection', ...FILES}, 180000, 180000);
+  const t = setup({
+    testaiFindMode: 'object_detection',
+    testaiObjDetectionDebug: true,
+    ...FILES
+  }, 180000, 180000);
 
   it('should find an element using the object detection strategy', async function () {
     this.timeout(180000);
@@ -105,6 +109,7 @@ describe('Finding by element - iOS', function () {
 describe('Finding by object detection - iOS', function () {
   const t = setup({
     testaiFindMode: 'object_detection',
+    testaiObjDetectionDebug: true,
     testaiObjDetectionThreshold: 0.9,
     ...PHOTOS
   }, 120000, 20000);

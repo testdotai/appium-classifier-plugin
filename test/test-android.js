@@ -1,6 +1,8 @@
+const path = require('path');
 const wd = require('wd');
 
 const APPIUM = "http://localhost:4723/wd/hub";
+const MODULE_PATH = path.resolve(__dirname, '..');
 
 const ANDROID_CAPS = {
   platformName: 'Android',
@@ -9,7 +11,8 @@ const ANDROID_CAPS = {
   noReset: true,
   appPackage: 'com.android.documentsui',
   appActivity: '.files.FilesActivity',
-  customFindModules: {'ai': 'test-ai-classifier'},
+  customFindModules: {ai: MODULE_PATH},
+  testaiObjDetectionDebug: true,
   shouldUseCompactResponses: false,
 };
 

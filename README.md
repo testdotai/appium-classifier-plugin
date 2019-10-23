@@ -99,7 +99,7 @@ element find; this plugin will tell you what the highest confidence of any
 element that matched your label was, so you could use that to modulate the
 confidence value. The default confidence level is `0.2`.
 
-### Element Discovery Mode
+### Element Discovery Modes
 
 There are two ways that this plugin can attempt to find elements:
 
@@ -114,7 +114,7 @@ There are two ways that this plugin can attempt to find elements:
    then sent into the classifier for labeling. Matched regions are returned to
    your test script as Appium ImageElements (meaning that all you can do with
    them is click/tap them). This mode can be specified by setting the
-   `testaiFindMode` capability to `object_detection`.
+   `testaiFindMode` capability to `object_detection`. By default, no output is logged from the native object detection code (apart from what TensorFlow itself does), but this can be turned on by setting the `testaiObjDetectionDebug` capability to `true`.
 
 Each of these modes comes with different benefits and drawbacks:
 
@@ -139,8 +139,20 @@ your script are really just representations of screen regions, not full-blown
 UI elements. So all that can be done with them is clicking/tapping them (of
 course, that's typically all you would do with an icon anyway).
 
-Object detection mode also relies on C/C++ code which is built on install. This
+Currently, detecting objects in a screenshot is quite slow.
+
+Object detection mode relies on C/C++ code which is built on install. This
 code is portable but may not compile on some systems.
+
+### Model Download
+
+The TensorFlow network used to run the object detection strategy is provided as a free download by Test.ai, and downloaded automatically on install. If something goes wrong or you want to download it manually, you can run:
+
+```
+node ./build-js/lib/download.js
+```
+
+This will not re-download the model if the MD5 hash of the model online matches what is currently downloaded.
 
 ## Development
 
