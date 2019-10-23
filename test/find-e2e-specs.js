@@ -28,18 +28,17 @@ const ANDROID = {
   ...GENERAL,
 };
 
-const WALMART = {
-  app: path.resolve(__dirname, '..', '..', 'test', 'fixtures', 'apps', 'walmart.apk'),
-  appWaitActivity: '.app.main.HomeActivity',
-  testaiConfidenceThreshold: 0.04,
+const FILES = {
+  appPackage: 'com.android.documentsui',
+  appActivity: '.files.FilesActivity',
   ...ANDROID,
 };
 
-
 const IOS = {
+  automationName: 'XCUITest',
   platformName: 'iOS',
   deviceName: 'iPhone 8',
-  platformVersion: '12.2',
+  platformVersion: '11.4',
   ...GENERAL,
 };
 
@@ -68,26 +67,26 @@ function setup (caps, testTimeout = 180000, implicitWaitTimeout = 40000) {
 }
 
 describe('Finding by element - Android', function () {
-  const t = setup(WALMART);
+  const t = setup(FILES);
 
   it('should find an element by its label', async function () {
     this.timeout(90000);
-    await t.driver.elementByAccessibilityId('Open navigation drawer');
+    await t.driver.elementByAccessibilityId('More options');
     await t.driver.elementByCustom('ai:menu').click();
-    await t.driver.elementByXPath('//android.widget.CheckedTextView[@text="Shop by Department"]');
+    await t.driver.elementByXPath('//android.widget.TextView[@text="SDCARD"]');
   });
 
 });
 
 describe('Finding by object detection - Android', function () {
-  const t = setup({testaiFindMode: 'object_detection', ...WALMART}, 180000, 180000);
+  const t = setup({testaiFindMode: 'object_detection', ...FILES}, 180000, 180000);
 
   it('should find an element using the object detection strategy', async function () {
     this.timeout(180000);
     await t.driver.updateSettings({checkForImageElementStaleness: false});
-    await t.driver.elementByAccessibilityId('Open navigation drawer');
+    await t.driver.elementByAccessibilityId('More options');
     await t.driver.elementByCustom('ai:menu').click();
-    await t.driver.elementByXPath('//android.widget.CheckedTextView[@text="Shop by Department"]');
+    await t.driver.elementByXPath('//android.widget.TextView[@text="SDCARD"]');
   });
 });
 
@@ -117,6 +116,6 @@ describe('Finding by object detection - iOS', function () {
     this.timeout(90000);
     await t.driver.elementByCustom('ai:search').click();
     await B.delay(5000);
-    await t.driver.elementByAccessibilityId('No Suggestions');
+    await t.driver.elementByAccessibilityId('October 2009');
   });
 });

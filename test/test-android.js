@@ -1,5 +1,4 @@
 const wd = require('wd');
-const B = require('bluebird');
 
 const APPIUM = "http://localhost:4723/wd/hub";
 
@@ -8,8 +7,8 @@ const ANDROID_CAPS = {
   deviceName: 'Android Emulator',
   automationName: 'UiAutomator2',
   noReset: true,
-  appPackage: 'com.walmart.android',
-  appActivity: '.app.main.MainActivity',
+  appPackage: 'com.android.documentsui',
+  appActivity: '.files.FilesActivity',
   customFindModules: {'ai': 'test-ai-classifier'},
   shouldUseCompactResponses: false,
 };
@@ -30,8 +29,13 @@ describe('Finding an Android element with machine learning magic', function () {
   });
 
   it('should find the cart button', async function () {
-    await driver.elementByAccessibilityId('Open navigation drawer');
-    await driver.elementByCustom('ai:cart').click();
-    await B.delay(6000); // for effect
+    // ensure we loaded the app
+    await driver.elementByAccessibilityId('More options');
+
+    // click on the menu button using the ai finder
+    await driver.elementByCustom('ai:menu').click();
+
+    // prove the menu opened by finding a menu item
+    await driver.elementByXPath('//android.widget.TextView[@text="SDCARD"]');
   });
 });
