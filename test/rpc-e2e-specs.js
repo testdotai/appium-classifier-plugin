@@ -8,6 +8,7 @@ import ClassifierClient from '../../clients/node/build'; // eslint-disable-line 
 chai.use(should);
 
 const PORT = 50051;
+const HOST = "127.0.0.1";
 const FIXTURES = path.resolve(__dirname, "..", "..", "test", "fixtures");
 const CART_IMG = path.resolve(FIXTURES, "cart.png");
 const MIC_IMG = path.resolve(FIXTURES, "microphone.png");
@@ -19,7 +20,7 @@ describe('RPC server', function () {
   let server;
 
   before(function () {
-    server = main(PORT);
+    server = main(HOST, PORT);
   });
 
   after(function () {
@@ -27,7 +28,7 @@ describe('RPC server', function () {
   });
 
   it('should handle requests to classify elements by image', async function () {
-    const c = new ClassifierClient({port: PORT});
+    const c = new ClassifierClient({host: HOST, port: PORT});
     const input = {
       labelHint: 'cart',
       elementImages: {
