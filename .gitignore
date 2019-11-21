@@ -3,3 +3,4 @@ node_modules
 test-ai-classifier.code-workspace
 model/obj_detection_model
 build-js
+clients/*/classifier.proto
