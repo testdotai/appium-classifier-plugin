@@ -15,6 +15,7 @@ const MIC_IMG = path.resolve(FIXTURES, "microphone.png");
 const FOLDER_IMG = path.resolve(FIXTURES, "folder.png");
 const MENU_IMG = path.resolve(FIXTURES, "menu.png");
 const TINY_MENU_IMG = path.resolve(FIXTURES, "menu_small.png");
+const MAIL_IMG = path.resolve(FIXTURES, "ap-mail.png");
 
 describe('Model', function () {
   it('should load the model', async function () {
@@ -30,6 +31,11 @@ describe('Model', function () {
   it('should make predictions based on model - cart', async function () {
     let pred = await predictionFromImage(await canvasFromImage(CART_IMG), DEFAULT_CONFIDENCE_THRESHOLD, "cart");
     pred[0].should.eql("cart");
+  });
+
+  it('should make predictions based on model - mail', async function () {
+    let pred = await predictionFromImage(await canvasFromImage(MAIL_IMG), DEFAULT_CONFIDENCE_THRESHOLD, "mail");
+    pred[0].should.eql("mail");
   });
 
   it('should make predictions based on model - mic', async function () {
