@@ -4,3 +4,6 @@ test-ai-classifier.code-workspace
 model/obj_detection_model
 build-js
 clients/*/classifier.proto
+clients/java/.idea
+clients/java/.gradle
+clients/java/*/build
