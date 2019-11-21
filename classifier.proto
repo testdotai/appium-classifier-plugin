@@ -1,4 +1,5 @@
 syntax = "proto3";
+option java_package = "ai.test.classifier_client";
 
 message ElementClassificationRequest {
     string labelHint = 1;
