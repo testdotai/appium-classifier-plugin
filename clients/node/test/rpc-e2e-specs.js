@@ -2,14 +2,15 @@ import fs from 'fs';
 import path from 'path';
 import chai from 'chai';
 import should from 'should';
-import { main } from '../lib/rpc';
-import ClassifierClient from '../../clients/node/build'; // eslint-disable-line import/no-unresolved
+import { remote } from 'webdriverio';
+import { main } from '../../../../build-js/lib/rpc'; // eslint-disable-line import/no-unresolved
+import ClassifierClient from '..';
 
 chai.use(should);
 
 const PORT = 50051;
 const HOST = "127.0.0.1";
-const FIXTURES = path.resolve(__dirname, "..", "..", "test", "fixtures");
+const FIXTURES = path.resolve(__dirname, "..", "..", "..", "..", "test", "fixtures");
 const CART_IMG = path.resolve(FIXTURES, "cart.png");
 const MIC_IMG = path.resolve(FIXTURES, "microphone.png");
 //const FOLDER_IMG = path.resolve(FIXTURES, "folder.png");
@@ -50,5 +51,27 @@ describe('RPC server', function () {
     res.mic.confidence.should.be.below(1.0);
     res.mic.confidenceForHint.should.be.above(0.0);
     res.mic.confidenceForHint.should.be.below(0.2);
+  });
+
+  it('should find elements when given a webdriverio object', async function () {
+    const c = new ClassifierClient({host: HOST, port: PORT});
+    const driver = await remote({
+      host: '127.0.0.1',
+      port: 4444,
+      capabilities: {
+        browserName: 'chrome'
+      }
+    });
+    try {
+      await driver.url('https://test.ai');
+      const els = await c.findElementsMatchingLabel({
+        driver,
+        labelHint: 'twitter',
+      });
+      await els[0].click();
+      (await driver.getUrl()).should.eql('https://twitter.com/testdotai');
+    } finally {
+      await driver.deleteSession();
+    }
   });
 });

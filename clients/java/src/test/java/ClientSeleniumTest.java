@@ -39,7 +39,6 @@ public class ClientSeleniumTest {
         Assert.assertThat(els, IsCollectionWithSize.hasSize(1));
         els.get(0).click();
         Assert.assertEquals(driver.getCurrentUrl(), "https://twitter.com/testdotai");
-
     }
 
 
