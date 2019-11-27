@@ -2,6 +2,12 @@
 
 The code in this directory defines a client library for use with the gRPC-based Test.ai classifier server located in the main directory of this repo.
 
+## Installation & Setup
+
+TBD
+
+## Usage
+
 This client exposes as the default export a `ClassifierClient` class, which can be instantiated as follows:
 
 ```js
@@ -26,3 +32,7 @@ The client exposes two instance methods:
     The return value of this method is an array of WebdriverIO element objects that match.
 
 For a concrete example, see `test/rpc-e2e-specs.js`
+
+## Development
+
+TBD

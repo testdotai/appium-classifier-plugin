@@ -7,3 +7,5 @@ clients/*/classifier.proto
 clients/java/.idea
 clients/java/.gradle
 clients/java/*/build
+.make.*
+.venv

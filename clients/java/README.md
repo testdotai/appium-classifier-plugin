@@ -2,6 +2,12 @@
 
 The code in this directory defines a client library for use with the gRPC-based Test.ai classifier server located in the main directory of this repo.
 
+## Installation & Setup
+
+TBD
+
+## Usage
+
 This client exposes two classes:
 
 ```
@@ -25,3 +31,7 @@ List<WebElement> findElementsMatchingLabel (RemoteWebDriver driver, String label
 The `Classification` object is simply a container for the label, confidence, and confidence for the label which was originally provided.
 
 For a concrete example, check out the `ClientSeleniumTest.java` file in this repo.
+
+## Development
+
+TBD
