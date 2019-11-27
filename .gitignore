@@ -11,3 +11,7 @@ clients/java/*/build
 .venv
 *.pyc
 *.pytest_cache
+clients/python/build
+clients/python/dist
+clients/python/dist/testai_classifier_client.egg-info
+clients/python/testai_classifier_client.egg-info

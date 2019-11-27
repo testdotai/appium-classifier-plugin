@@ -4,5 +4,7 @@ The code in this directory defines a client library for use with the gRPC-based 
 
 ## Development
 
-* `pipenv install` - install deps
+* `pipenv install` - install deps (requires Pipenv)
 * `make protogen` - generate python client helpers from .proto file
+* `make clean` - reset generated files
+* `make test` - run test suite

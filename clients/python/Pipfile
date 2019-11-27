@@ -8,6 +8,8 @@ selenium = "*"
 grpcio-tools = "*"
 pytest = "*"
 setuptools = "*"
+twine = "*"
+wheel = "*"
 
 [packages]
 grpcio = "*"
