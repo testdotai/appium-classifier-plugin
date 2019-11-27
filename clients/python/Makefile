@@ -1,4 +1,4 @@
-.PHONY: protogen clean test build se-test unit-test
+.PHONY: protogen clean test build se-test unit-test publish publish-test
 
 protogen: .make.protogen
 
@@ -15,6 +15,12 @@ se-test:
 test: unit-test se-test
 
 build: .make.build
+
+publish-test:
+	pipenv run twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+
+publish:
+	pipenv run twine upload dist/*
 
 .make.protogen:
 	pipenv run python -m grpc_tools.protoc --proto_path ../.. --python_out=. --grpc_python_out=. ../../classifier.proto

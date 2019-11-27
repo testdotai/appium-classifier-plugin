@@ -15,7 +15,7 @@ setuptools.setup(
     packages=setuptools.find_packages(include=['testai_classifier', 'testai_classifier.*']),
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: APACHE-2.0 License",
+        "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.7',
