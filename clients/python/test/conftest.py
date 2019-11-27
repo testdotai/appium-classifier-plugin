@@ -2,7 +2,7 @@ import pytest
 from os import path
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from testai_classifier.client import ClassifierClient
+from testai_classifier import ClassifierClient
 
 
 HOST = 'localhost'

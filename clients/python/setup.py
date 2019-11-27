@@ -12,11 +12,13 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/testdotai/appium-classifier-plugin",
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages(include=['testai_classifier', 'testai_classifier.*']),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: APACHE-2.0 License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.7',
+    install_requires=['grpcio'],
+    keywords='selenium appium ai ml'
 )
