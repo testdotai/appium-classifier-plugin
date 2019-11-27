@@ -1,12 +1,18 @@
-.PHONY: protogen clean test
+.PHONY: protogen clean test build se-test unit-test
 
 protogen: .make.protogen
 
 clean:
-	rm .make.*
+	rm -rf .make.*
+	rm -rf dist build *.egg-info
 
-test:
-	pipenv run pytest ./test/test_*.py
+unit-test:
+	pipenv run pytest ./test/test_client.py
+
+se-test:
+	pipenv run pytest ./test/test_client_selenium.py
+
+test: unit-test se-test
 
 build: .make.build
 
