@@ -9,3 +9,5 @@ clients/java/.gradle
 clients/java/*/build
 .make.*
 .venv
+*.pyc
+*.pytest_cache

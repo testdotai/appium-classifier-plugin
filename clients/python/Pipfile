@@ -6,6 +6,8 @@ verify_ssl = true
 [dev-packages]
 selenium = "*"
 grpcio-tools = "*"
+pytest = "*"
+setuptools = "*"
 
 [packages]
 grpcio = "*"
