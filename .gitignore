@@ -13,5 +13,4 @@ clients/java/*/build
 *.pytest_cache
 clients/python/build
 clients/python/dist
-clients/python/dist/testai_classifier_client.egg-info
-clients/python/testai_classifier_client.egg-info
+clients/python/*.egg-info

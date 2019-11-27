@@ -1,4 +1,7 @@
-.PHONY: protogen clean test build se-test unit-test publish publish-test
+.PHONY: protogen clean test build se-test unit-test publish publish-test install
+
+install:
+	pipenv install
 
 protogen: .make.protogen
 
