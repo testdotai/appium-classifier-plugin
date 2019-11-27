@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="testai-classifier-client",
+    name="testai_classifier",
     version="1.0.0",
     author="Jonathan Lipps",
     author_email="jlipps@cloudgrey.io",
