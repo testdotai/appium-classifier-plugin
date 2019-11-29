@@ -1,0 +1,7 @@
+source 'https://rubygems.org'
+gem 'grpc'
+
+group :development do
+    gem 'grpc-tools'
+    gem 'minitest'
+end
