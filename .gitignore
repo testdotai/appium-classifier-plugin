@@ -14,3 +14,4 @@ clients/java/*/build
 clients/python/build
 clients/python/dist
 clients/python/*.egg-info
+*.gem

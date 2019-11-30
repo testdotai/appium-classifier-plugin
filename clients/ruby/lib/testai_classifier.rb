@@ -1,10 +1,6 @@
-# enable absolute requires
-this_dir = File.expand_path(File.dirname(__FILE__))
-$LOAD_PATH.unshift(this_dir) unless $LOAD_PATH.include?(this_dir)
-
 require 'selenium-webdriver'
-require 'classifier_services_pb'
-require 'extensions'
+require 'testai_classifier/classifier_services_pb'
+require 'testai_classifier/extensions'
 
 # Selenium Ruby client doesn't currently implement the 'take element
 # screenshot' command, so we have to patch it in

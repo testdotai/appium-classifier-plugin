@@ -1,4 +1,4 @@
-require_relative '../lib/testai_classifier'
+require 'testai_classifier'
 require 'minitest/autorun'
 require 'selenium-webdriver'
 
@@ -21,7 +21,7 @@ describe ClassifierClient do
 
     describe "when asked to classify some images" do
         it "must provide correct labels and confidence results" do
-            element_images = {"menu" => @menu, "cart" => @cart}
+            element_images = {menu: @menu, cart: @cart}
             resp = @client.classify_images("cart", element_images, 0.0, true)
             cart = resp["cart"]
             _(cart[:label]).must_equal "cart"

@@ -2,7 +2,7 @@
 # Source: classifier.proto for package ''
 
 require 'grpc'
-require 'classifier_pb'
+require_relative 'classifier_pb'
 
 module Classifier
   class Service

@@ -4,6 +4,7 @@ gem 'selenium-webdriver'
 
 group :development do
     gem 'grpc-tools'
+    gem 'irb'
 end
 
 group :test do
