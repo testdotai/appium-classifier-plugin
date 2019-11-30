@@ -1,4 +1,4 @@
-require_relative '../lib/client'
+require_relative '../lib/testai_classifier'
 require 'minitest/autorun'
 require 'selenium-webdriver'
 
