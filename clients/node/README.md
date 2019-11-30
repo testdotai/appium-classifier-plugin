@@ -4,13 +4,16 @@ The code in this directory defines a client library for use with the gRPC-based 
 
 ## Installation & Setup
 
-TBD
+```
+npm install test-ai-classifier-client
+```
 
 ## Usage
 
 This client exposes as the default export a `ClassifierClient` class, which can be instantiated as follows:
 
 ```js
+const ClassifierClient = require('test-ai-classifier-client');
 const client = new ClassifierClient({host, port})
 ```
 
