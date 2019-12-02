@@ -4,7 +4,7 @@ The code in this directory defines a client library for use with the gRPC-based 
 
 ## Installation & Setup
 
-TBD
+At this point, the library is not available on Maven Central for easy download. Instead, check the [Releases](https://github.com/testdotai/appium-classifier-plugin/releases) page to download pre-built Jarfiles you can import into your projects.
 
 ## Usage
 
@@ -31,7 +31,3 @@ List<WebElement> findElementsMatchingLabel (RemoteWebDriver driver, String label
 The `Classification` object is simply a container for the label, confidence, and confidence for the label which was originally provided.
 
 For a concrete example, check out the `ClientSeleniumTest.java` file in this repo.
-
-## Development
-
-TBD
