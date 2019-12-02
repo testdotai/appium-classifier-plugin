@@ -26,6 +26,7 @@ The client exposes two instance methods:
     2. `elementImages`: an object whose keys are ids, and whose values are `Buffer` objects containing raw binary data of PNG images.
     3. `confidenceThreshold`: (optional) the confidence below which not to return matches (0.0 - 1.0)
     4. `allowWeakerMatches`: (optional) whether or not to return a match for elements that *did* match the label, but for whom *another* label had a higher confidence.
+
     The return value of this method is an object whose keys are the same ids you sent in, and whose values are classification objects with the following keys:
     1. `label`: the matching label
     2. `confidence`: the confidence for the matched label
