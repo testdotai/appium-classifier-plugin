@@ -5,6 +5,9 @@
   "homepage": "https://github.com/testdotai/appium-classifier-plugin#readme",
   "bugs": "https://github.com/testdotai/appium-classifier-plugin/issues",
   "main": "./build-js/index.js",
+  "bin": {
+      "testai-classifier": "./build-js/lib/rpc.js"
+  },
   "gypfile": true,
   "scripts": {
     "clean-js": "rm -rf node_modules && rm -f package-lock.json && rm -rf build-js && npm install",

@@ -1,4 +1,4 @@
-# Test.ai Classifier Plugin for Appium
+# Test.ai Classifier Server and Appium Plugin
 
 This is an experimental plugin for [Appium](https://appium.io) that enables
 test automation of mobile apps using [Test.ai](https://test.ai)'s
@@ -7,6 +7,10 @@ using a semantic label (like "cart" or "microphone" or "arrow") instead of
 having to dig through your app hierarchy. The same labels can be used to find
 elements with the same general shape across different apps and different visual
 designs.
+
+In addition to being a plugin for Appium, this project also contains a small
+server that can be run, bundled with clients in various programming languages
+that allow the same functionality for [Selenium](https://seleniumhq.org). (See further below)
 
 If you haven't worked with Appium element finding plugins before, you should
 first check out the [Appium element finding plugins
@@ -153,6 +157,25 @@ node ./build-js/lib/download.js
 ```
 
 This will not re-download the model if the MD5 hash of the model online matches what is currently downloaded.
+
+## Classifier Server
+
+While the functionality provided by this project is available as a plugin for direct use with Appium, it can also be used for arbitrary purposes. In this fashion, it must be run as a server, which accepts connections from a client written in a number of languages. These clients can ask the server to classify images. The clients also make available a method which takes a Selenium driver object and finds elements matching a label.
+
+### Server Usage
+
+```
+testai-classifier -h <HOST> -p <PORT>
+```
+
+The default host is `127.0.0.1` and the default port is `50051`.
+
+For information on how to use the clients to take advantage of the server's functionality, see the READMEs for each of the clients:
+
+* [Java client](clients/java)
+* [Python client](clients/python)
+* [Node client](clients/node)
+* [Ruby client](clients/ruby)
 
 ## Development
 
