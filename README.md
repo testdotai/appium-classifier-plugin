@@ -160,7 +160,12 @@ This will not re-download the model if the MD5 hash of the model online matches 
 
 ## Classifier Server
 
-While the functionality provided by this project is available as a plugin for direct use with Appium, it can also be used for arbitrary purposes. In this fashion, it must be run as a server, which accepts connections from a client written in a number of languages. These clients can ask the server to classify images. The clients also make available a method which takes a Selenium driver object and finds elements matching a label.
+While the functionality provided by this project is available as a plugin for
+direct use with Appium, it can also be used for arbitrary purposes. In this
+fashion, it must be run as a server, which accepts connections from a client
+written in a number of languages. These clients can ask the server to classify
+images. The clients also make available a method which takes a Selenium driver
+object and finds elements matching a label.
 
 ### Server Usage
 
@@ -176,6 +181,10 @@ For information on how to use the clients to take advantage of the server's func
 * [Python client](clients/python)
 * [Node client](clients/node)
 * [Ruby client](clients/ruby)
+
+There are some limitations to how the Selenium support works, because it relies
+on the `getElementScreenshot` functionality, which is not yet supported well by
+all the major browsers. (In my testing, Chrome was the most reliable).
 
 ## Development
 
