@@ -6,7 +6,7 @@
   "bugs": "https://github.com/testdotai/appium-classifier-plugin/issues",
   "main": "./build-js/index.js",
   "bin": {
-      "testai-classifier": "./build-js/lib/rpc.js"
+    "testai-classifier": "./build-js/lib/rpc.js"
   },
   "gypfile": true,
   "scripts": {
@@ -48,9 +48,9 @@
   "author": "Jonathan Lipps <jlipps@gmail.com>",
   "license": "Apache-2.0",
   "dependencies": {
-    "@grpc/proto-loader": "^0.5.3",
-    "@tensorflow/tfjs-node": "0.x",
-    "appium-base-driver": "^3.15.4",
+    "@grpc/proto-loader": "0.x",
+    "@tensorflow/tfjs-node": "1.x",
+    "appium-base-driver": "3.x",
     "appium-support": "2.x",
     "asyncbox": "2.x",
     "bindings": "1.x",
@@ -59,9 +59,9 @@
     "grpc": "^1.24.2",
     "lodash": "4.x",
     "node-addon-api": "1.x",
-    "npmlog": "^4.1.2",
-    "request-promise": "^4.2.4",
-    "yargs": "^15.0.2"
+    "npmlog": "4.x",
+    "request-promise": "4.x",
+    "yargs": "15.x"
   },
   "devDependencies": {
     "appium-gulp-plugins": "^3.0.0",

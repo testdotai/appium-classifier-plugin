@@ -1,5 +1,5 @@
 #include <iostream>
-#include <napi.h>
+#include "napi.h"
 #include "detection.h"
 #include "../node_modules/@tensorflow/tfjs-node/deps/include/tensorflow/c/c_api.h"
 
@@ -38,7 +38,7 @@ Napi::Value Detect(const Napi::CallbackInfo &info) {
     if (res.status == 0) {
         return res.detected;
     }
-    
+
     Napi::Error::New(env, res.message).ThrowAsJavaScriptException();
     return env.Null();
 }
