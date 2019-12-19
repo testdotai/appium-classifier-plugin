@@ -1,0 +1,3 @@
+[submodule "classifier-proto"]
+	path = classifier-proto
+	url = git@github.com:testdotai/classifier-proto.git
