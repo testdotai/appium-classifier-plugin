@@ -170,7 +170,7 @@ object and finds elements matching a label.
 ### Server Usage
 
 ```
-testai-classifier -h <HOST> -p <PORT>
+test-ai-classifier -h <HOST> -p <PORT>
 ```
 
 The default host is `127.0.0.1` and the default port is `50051`.
