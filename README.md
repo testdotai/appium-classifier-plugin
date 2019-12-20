@@ -175,12 +175,12 @@ testai-classifier -h <HOST> -p <PORT>
 
 The default host is `127.0.0.1` and the default port is `50051`.
 
-For information on how to use the clients to take advantage of the server's functionality, see the READMEs for each of the clients:
+For information on how to use the clients to take advantage of the server's functionality, see the repositories for each of them:
 
-* [Java client](clients/java)
-* [Python client](clients/python)
-* [Node client](clients/node)
-* [Ruby client](clients/ruby)
+* [Java client](https://github.com/testdotai/classifier-client-java)
+* [Python client](https://github.com/testdotai/classifier-client-python)
+* [Node client](https://github.com/testdotai/classifier-client-node)
+* [Ruby client](https://github.com/testdotai/classifier-client-ruby)
 
 There are some limitations to how the Selenium support works, because it relies
 on the `getElementScreenshot` functionality, which is not yet supported well by
