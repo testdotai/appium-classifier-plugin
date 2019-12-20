@@ -6,7 +6,7 @@
   "bugs": "https://github.com/testdotai/appium-classifier-plugin/issues",
   "main": "./build-js/index.js",
   "bin": {
-    "testai-classifier": "./build-js/lib/rpc.js"
+    "test-ai-classifier": "./build-js/lib/rpc.js"
   },
   "gypfile": true,
   "scripts": {
