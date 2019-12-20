@@ -3,13 +3,4 @@ node_modules
 test-ai-classifier.code-workspace
 model/obj_detection_model
 build-js
-clients/*/classifier.proto
-.make.*
-.venv
-*.pyc
-*.pytest_cache
-clients/python/build
-clients/python/dist
-clients/python/*.egg-info
-*.gem
 .vim
