@@ -35,6 +35,7 @@
     "postinstall.js",
     "binding.gyp",
     "gulpfile.js",
+    "classifier-proto/classifier.proto",
     "README.md"
   ],
   "keywords": [
